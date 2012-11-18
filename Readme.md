@@ -4,7 +4,7 @@
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
 
 
-![](./image-comments/readme_files/example1.png)
+![](./image-comments/raw/master/Readme_files/Example1.PNG)
 
 
 Its creation was instigated by wanting to show nicely formatted formulae alongside the code that implements them.
