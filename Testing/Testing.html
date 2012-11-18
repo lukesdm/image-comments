@@ -1,0 +1,52 @@
+<html>
+<head>
+    <title>ImageComments Notes</title>
+</head>
+<body>
+    <h1>
+        An incomplete list of things to test</h1>
+    <p>
+        *** = Haven't tested, high risk of problems<br />
+        ** = Haven't tested, less risk<br />
+        * = 
+        Some testing performed<br />^ = Probably fine</p>
+    <h2>
+        Standard tests</h2>
+    <ul>
+        <li>Large images (file size) **</li>
+        <li>Large images (dimensions, e.g. massive scale factors) *</li>
+        <li>Multiple editor windows
+            <ul>
+                <li>Side by side * (+ single file in multiple windows **)</li>
+                <li>In inactive tabs *</li>
+                <li>Split (single file) *</li></ul>
+        </li>
+        <li>Changing content type, e.g .cs to .vb **</li>
+        <li>Cutting, copying and pasting<ul>
+            <li>Normal usage within single editor window *</li>
+            <li>Across editor windows *</li>
+            <li>Special case: cutting/copying and pasting such that view-relative lines are unchanged
+                (but content-relative lines are). *</li>
+            <li>Multiple identical ^</li>
+        </ul>
+        </li>
+        <li>Lots of different tiny image comments **</li>
+        <li>Lots of different large image comments ***</li>
+    </ul>
+    <h2>
+        More general tests</h2>
+    <ul>
+        <li>Interaction with other extensions, esp. Code Contracts and Resharper. ***</li>
+        <li>Languages other than c# **</li>
+        <li>VSIX [un]installation and versioning ***</li>
+    </ul>
+    <h2>
+        Notes</h2>
+    <p>
+        Dummy Project is a stand-alone solution and project containing a couple of files 
+        that have image-comments in them. Most of the images referred to are from the 
+        Windows 7 Sample pictures copied into C:\Temp. There&#39;s another in Dummy 
+        Project\Images folder that should be copied to the same place. Dummy Project can 
+        only be used for very basic tests out of the box.</p>
+</body>
+</html>
