@@ -3,11 +3,8 @@
 ## Overview
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
 
-
 ![](http://lukesdm.github.com/image-comments/media/example-1.png)
 
-
-Its creation was instigated by wanting to show nicely formatted formulae alongside the code that implements them.
 ## Usage Info
 
 ### Preamble
@@ -72,3 +69,6 @@ The code is in a semi-prototype state - it may not need a rewrite from scratch, 
 * Program/project structure could be improved
 * No automated tests and manual testing has been limited.
 * There are some fairly obvious potential optimisations, but so far performance impact on plain Visual Studio seems minimal (in a release build on a 1.4GHz Core 2 Duo laptop with 1GB RAM). It would probably just add unneccessary complexity, but further testing might show otherwise.
+
+## License
+GPLv3
