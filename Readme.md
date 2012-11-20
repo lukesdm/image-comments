@@ -4,7 +4,7 @@
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
 
 
-![](https://github.com/lukesdm/image-comments/raw/master/Readme_files/Example1.PNG)
+![](http://github.com/lukesdm/image-comments/raw/master/Readme_files/Example1.PNG)
 
 
 Its creation was instigated by wanting to show nicely formatted formulae alongside the code that implements them.
@@ -34,7 +34,7 @@ Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-
 If there's a problem trying to load the image or parse the tag, the tag will be squiggly-underlined and hovering over this will show the error, e.g
 
 
-![](https://github.com/lukesdm/image-comments/raw/master/Readme_files/ErrorExample1.PNG)
+![](http://github.com/lukesdm/image-comments/raw/master/Readme_files/ErrorExample1.PNG)
 
 
 Image-comments don't really have anything to do with XML comments, but the format is convenient and it should be pretty straight-forward to transform them for Sandcastle doc creation.
