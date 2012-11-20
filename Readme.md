@@ -4,7 +4,7 @@
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
 
 
-![](./image-comments/raw/master/Readme_files/Example1.PNG)
+![](https://github.com/lukesdm/image-comments/raw/master/Readme_files/Example1.PNG)
 
 
 Its creation was instigated by wanting to show nicely formatted formulae alongside the code that implements them.
@@ -24,12 +24,17 @@ Also: currently only works in C# files
 Activate the VISX file
 ### How to use
 Image-comments are declared with   
-/// &lt;image url="X:\Path\To\Image.ext" *scale="Y"* />
+`/// <image url="X:\Path\To\Image.ext" *scale="Y"* />`
 
-The *scale* attribute multiplies the source width and height by Y and is optional.
+The `scale` attribute multiplies the source width and height by Y and is optional.
 
-Images are displayed using the
-[WPF Image control](http://msdn.microsoft.com/en-us/library/ms610982) with a [BitmapFrame](http://msdn.microsoft.com/en-us/library/ms619213) source, and accepted image and URL formats are tied to those, e.g. BMP, PNG, JPG all work as image formats, and C:\Path\To\Image.png, http://www.server.com/image.png and \\server\folder\image.png all work as URLs*.
+Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-us/library/ms610982) with a [BitmapFrame](http://msdn.microsoft.com/en-us/library/ms619213) source, and accepted image and URL formats are tied to those, e.g. BMP, PNG, JPG all work as image formats, and C:\Path\To\Image.png, http://www.server.com/image.png and \\server\folder\image.png all work as URLs*.
+
+
+If there's a problem trying to load the image or parse the tag, the tag will be squiggly-underlined and hovering over this will show the error, e.g
+
+
+![](https://github.com/lukesdm/image-comments/raw/master/Readme_files/ErrorExample1.PNG)
 
 
 Image-comments don't really have anything to do with XML comments, but the format is convenient and it should be pretty straight-forward to transform them for Sandcastle doc creation.
@@ -60,8 +65,10 @@ There are two components to the extension:
 * ImageCommentsPackage. Adds a command to enable/disable functionality; VSIX definition.
 
 For testing information, see [.\Testing\Testing.html](./testing/testing.html)
-
 ### Some known implementation issues
-* Error/exception handling could be improved
+The code is in a semi-prototype state - it may not need a rewrite from scratch, but there's a bunch of stuff to be done
+
+* Error/exception handling should be improved
 * Program/project structure could be improved
 * No automated tests and manual testing has been limited.
+* There are some fairly obvious potential optimisations, but so far performance impact on plain Visual Studio seems minimal (in a release build on a 1.4GHz Core 2 Duo laptop with 1GB RAM). It would probably just add unneccessary complexity, but further testing might show otherwise.
