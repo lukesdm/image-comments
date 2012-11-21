@@ -1,1 +1,1 @@
-A copy of the VISX will be created in here during a release build.
+A copy of the VSIX will be created in here during a release build.

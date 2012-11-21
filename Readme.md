@@ -13,15 +13,15 @@ prototype stage
 and may be unstable. Please report 
 issues on the GitHub repo.  
 
-Requires: Visual Studio 2010 Standard, Premium etc. 
-*(Not for 2012 yet)*; .Net 4.  
-Also: currently only works in C# files
+Requires: Visual Studio 2010 Standard, Premium etc. **(Not for 2012 yet)**; .Net 4.  
 
-### Installation
-Activate the VISX file
+Also: **currently only works in C# files**
+
+### Download/Installation
+[Download](http://github.com/lukesdm/image-comments/raw/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
 ### How to use
 Image-comments are declared with   
-`/// <image url="X:\Path\To\Image.ext" *scale="Y"* />`
+`/// <image url="X:\Path\To\Image.ext" scale="Y" />`
 
 The `scale` attribute multiplies the source width and height by Y and is optional.
 
@@ -69,6 +69,7 @@ The code is in a semi-prototype state - it may not need a rewrite from scratch, 
 * Program/project structure could be improved
 * No automated tests and manual testing has been limited.
 * There are some fairly obvious potential optimisations, but so far performance impact on plain Visual Studio seems minimal (in a release build on a 1.4GHz Core 2 Duo laptop with 1GB RAM). It would probably just add unneccessary complexity, but further testing might show otherwise.
+* ...
 
 ## License
 GPLv3
