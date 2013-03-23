@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DummyAlternate
 {
+    /// <summary>
+    /// <image url="$(SolutionDir)\CommonImages\Tile.jpg" />
+    /// </summary>
     class Class1
     {
     }

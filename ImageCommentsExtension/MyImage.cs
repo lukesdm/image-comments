@@ -59,7 +59,9 @@ namespace LM.ImageComments.EditorComponent
             exception = null;
             try
             {
-                this.Source = BitmapFrame.Create(new Uri(_variableExpander.ProcessText(imageUrl), UriKind.RelativeOrAbsolute));
+                //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
+                //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
+                this.Source = BitmapFrame.Create(new Uri(_variableExpander.ProcessText(imageUrl), UriKind.Absolute));
                 this.Url = imageUrl;
             }
             catch (Exception ex)

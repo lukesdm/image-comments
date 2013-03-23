@@ -16,6 +16,9 @@ namespace LM.ImageComments
 {
     /// <summary>
     /// This class provides variable substitution for strings, e.g. replacing '$(ProjectDir)' with 'C:\MyProject\'
+    /// Currently supported variables are:
+    ///   $(ProjectDir)
+    ///   $(SolutionDir)
     /// </summary>
     class VariableExpander
     {
@@ -28,7 +31,7 @@ namespace LM.ImageComments
         private string _projectDirectory;
         private string _solutionDirectory;
 
-        private IWpfTextView _view;
+        private readonly IWpfTextView _view;
 
         public VariableExpander(IWpfTextView view)
         {
@@ -43,7 +46,7 @@ namespace LM.ImageComments
             {
                 populateVariableValues();
             }
-            catch (Exception ex)
+            catch (Exception ex) // TODO [?]: Investigate exceptions that can be thrown with VS interop and refine the exception handling here
             {
                 ExceptionHandler.Notify(ex, true);
             }
@@ -56,33 +59,40 @@ namespace LM.ImageComments
         /// <returns>Processed URL string</returns>
         public string ProcessText(string urlString)
         {
-            string processedUrl = _variableMatcher.Replace(urlString, match =>
-                {
-                    string variableName = match.Value;
-                    if (string.Compare(variableName, PROJECTDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
-                    {
-                        return _projectDirectory;
-                    }
-                    else if (string.Compare(variableName, SOLUTIONDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
-                    {
-                        return _solutionDirectory;
-                    }
-                    else
-                    {
-                        // Could throw an exception here, but it's possible the path contains $(...).
-                        // TODO: Variable name escaping
-                        return variableName;
-                    }
-                });
-            return processedUrl;
+            string processedText = _variableMatcher.Replace(urlString, evaluator);
+            return processedText;
         }
 
-        
         /// <summary>
-        /// Populates variable values from project item associated with TextView.
+        /// Regex.Replace Match evaluator callback. Performs variable name/value substitution
+        /// </summary>
+        /// <param name="match"></param>
+        /// <returns></returns>
+        private string evaluator(Match match)
+        {
+            string variableName = match.Value;
+            if (string.Compare(variableName, PROJECTDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                return _projectDirectory;
+            }
+            else if (string.Compare(variableName, SOLUTIONDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                return _solutionDirectory;
+            }
+            else
+            {
+                // Could throw an exception here, but it's possible the path contains $(...).
+                // TODO: Variable name escaping
+                return variableName;
+            }
+        }
+
+        /// <summary>
+        /// Populates variable values from the ProjectItem associated with the TextView.
         /// </summary>
         /// <remarks>Based on code from http://stackoverflow.com/a/2493865
-        /// Guarantees variables will not be null, but they may be empty
+        /// Guarantees variables will not be null, but they may be empty if e.g. file isn't part of a project, or solution hasn't been saved yet
+        /// TODO: If additional variables are added that reference the path to the document, handle cases of 'Save as' / renaming
         /// </remarks>
         private void populateVariableValues()
         {
@@ -91,7 +101,7 @@ namespace LM.ImageComments
             
             ITextDocument document;
             _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out document);
-            var dte2 = (DTE2) Package.GetGlobalService(typeof (SDTE));
+            var dte2 = (DTE2)Package.GetGlobalService(typeof (SDTE));
             ProjectItem projectItem = dte2.Solution.FindProjectItem(document.FilePath);
                 
             string projectPath = projectItem.ContainingProject.FileName;
