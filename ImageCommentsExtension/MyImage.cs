@@ -47,7 +47,7 @@
             exception = null;
             try
             {
-                this.Source = BitmapFrame.Create(new Uri(imageUrl));
+                this.Source = BitmapFrame.Create(new Uri(imageUrl, UriKind.RelativeOrAbsolute));
                 this.Url = imageUrl;
             }
             catch (Exception ex)

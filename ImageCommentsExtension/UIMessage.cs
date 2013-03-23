@@ -14,7 +14,6 @@
         {
             IVsOutputWindow outWindow = Package.GetGlobalService(typeof(SVsOutputWindow)) as IVsOutputWindow;
 
-            //Guid generalPaneGuid = VSConstants.GUID_OutWindowGeneralPane; //LM: GetPane failed when passing in general output pane GUID. [Is there such a thing?]
             Guid debugPaneGuid = VSConstants.GUID_OutWindowDebugPane;
             IVsOutputWindowPane debugPane;
             int gotPane = outWindow.GetPane(ref debugPaneGuid, out debugPane);

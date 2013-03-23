@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace LM.ImageComments.EditorComponent
 {
     [Export(typeof(ILineTransformSourceProvider))]
-    [ContentType("text")]
+    [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     internal class MyLineTransformSourceProvider : ILineTransformSourceProvider
     {

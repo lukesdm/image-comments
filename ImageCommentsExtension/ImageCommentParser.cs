@@ -31,11 +31,11 @@
             Match match = null;
             switch (contentTypeName)
             {
+                case "C/C++":
                 case "CSharp":
                     match = _csharpImageCommentRegex.Match(lineText);
                     break;
-                case "VisualBasic":
-                    // TODO: Haven't tested anything with VB
+                case "Basic":
                     match = _vbImageCommentRegex.Match(lineText);
                     break;
                 //TODO: Add support for more languages

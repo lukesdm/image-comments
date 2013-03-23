@@ -8,7 +8,7 @@
     using System.Diagnostics;
 
     [Export(typeof(IViewTaggerProvider))]
-    [ContentType("text")]
+    [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic")]
     [TagType(typeof(ErrorTag))]
     internal class ErrorTaggerProvider : IViewTaggerProvider
     {
