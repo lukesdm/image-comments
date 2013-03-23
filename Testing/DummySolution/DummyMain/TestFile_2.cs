@@ -14,7 +14,7 @@ namespace Parties
 	      ;
 	  }
 	  
-	  /// <image url="C:\Temp\koala.jpg" scale="0.2" />
+	  /// <image url="$(ProjectDir)\CommentPics\koala.jpg" scale="0.2" />
 	  public static void koala()
 	  {
 	      ;

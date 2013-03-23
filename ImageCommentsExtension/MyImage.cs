@@ -1,14 +1,26 @@
-﻿namespace LM.ImageComments.EditorComponent
+﻿using LM.ImageComments;
+namespace LM.ImageComments.EditorComponent
 {
     using System;
     using System.Windows.Controls;
     using System.Windows.Media.Imaging;
 
     /// <summary>
-    /// Convenience sub-class of Image
+    /// Sub-class of Image with convenient URL-based Source changing
     /// </summary>
     internal class MyImage : Image
     {
+        private VariableExpander _variableExpander;
+
+        public MyImage(VariableExpander variableExpander) : base()
+        {
+            if (variableExpander == null)
+            {
+                throw new ArgumentNullException("variableExpander");
+            }
+            _variableExpander = variableExpander;
+        }
+        
         public string Url { get; private set; }
         
         /// <summary>
@@ -47,7 +59,7 @@
             exception = null;
             try
             {
-                this.Source = BitmapFrame.Create(new Uri(imageUrl, UriKind.RelativeOrAbsolute));
+                this.Source = BitmapFrame.Create(new Uri(_variableExpander.ProcessText(imageUrl), UriKind.RelativeOrAbsolute));
                 this.Url = imageUrl;
             }
             catch (Exception ex)

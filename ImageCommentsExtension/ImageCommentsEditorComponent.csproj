@@ -91,6 +91,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImageAdornmentManager.cs" />
     <Compile Include="UIMessage.cs" />
+    <Compile Include="VariableExpander.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />

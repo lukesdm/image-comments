@@ -42,6 +42,7 @@ namespace LM.ImageComments.EditorComponent
 
         private IAdornmentLayer _layer;
         private IWpfTextView _view;
+        private VariableExpander _variableExpander;
         private string _contentTypeName;
         private bool _initialised1 = false;
         private bool _initialised2 = false;
@@ -52,7 +53,7 @@ namespace LM.ImageComments.EditorComponent
             _view = view;
             _layer = view.GetAdornmentLayer("ImageCommentLayer");
             Images = new Dictionary<int, MyImage>();
-            _view.LayoutChanged += new EventHandler<TextViewLayoutChangedEventArgs>(OnLayoutChanged);
+            _view.LayoutChanged += OnLayoutChanged;
 
             _contentTypeName = view.TextBuffer.ContentType.TypeName;
             _view.TextBuffer.ContentTypeChanged += (sender, e) =>
@@ -61,6 +62,7 @@ namespace LM.ImageComments.EditorComponent
                 };
 
             _errorTags = new List<ITagSpan<ErrorTag>>();
+            _variableExpander = new VariableExpander(_view);
         }
 
         /// <summary>
@@ -103,7 +105,6 @@ namespace LM.ImageComments.EditorComponent
                 _view.ZoomLevel--;
                 _initialised2 = true;
             }
-
         }
 
         /// <summary>
@@ -125,7 +126,7 @@ namespace LM.ImageComments.EditorComponent
                 // Get coordinates of text
                 int start = line.Extent.Start.Position + matchIndex;
                 int end = line.Start + (line.Extent.Length - 1);
-                SnapshotSpan span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
+                var span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
 
                 Exception xmlParseException;
                 ImageCommentParser.TryParse(matchedText, out imageUrl, out scale, out xmlParseException);
@@ -162,7 +163,7 @@ namespace LM.ImageComments.EditorComponent
                 }
                 else // No existing image, so create new one
                 {
-                    image = new MyImage();
+                    image = new MyImage(_variableExpander);
                     image.TrySet(imageUrl, scale, out imageLoadingException);
                     Images.Add(lineNumber, image);
                 }
@@ -213,12 +214,12 @@ namespace LM.ImageComments.EditorComponent
 
         private string getErrorMessage(Exception exception)
         {
-            Trace.WriteLine("Problem parsing comment text or loading image...\n" + exception.ToString());
+            Trace.WriteLine("Problem parsing comment text or loading image...\n" + exception);
 
             string message;
             if (exception is XmlException)
                 message = "Problem with comment format: " + exception.Message;
-            else if (exception is System.NotSupportedException)
+            else if (exception is NotSupportedException)
                 message = exception.Message + "\nThis problem could be caused by corrupt, invalid or unsupported image file.";
             else
                 message = exception.Message;
