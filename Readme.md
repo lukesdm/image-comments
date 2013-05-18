@@ -27,7 +27,7 @@ You can use the VS environment variables $(ProjectDir) and $(SolutionDir) in URL
 `/// <image <url="$(SolutionDir)\CommonImages\Fourier.jpg`
 
 
-Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-us/library/ms610982) with a [BitmapFrame](http://msdn.microsoft.com/en-us/library/ms619213) source, and accepted image and URL formats are tied to those, e.g. BMP, PNG, JPG all work as image formats, and C:\Path\To\Image.png, http://www.server.com/image.png and \\server\folder\image.png all work as URLs*.
+Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-us/library/ms610982) with a [BitmapFrame](http://msdn.microsoft.com/en-us/library/ms619213) source, and accepted image and URL formats are tied to those, e.g. BMP, PNG, JPG all work as image formats, and C:\Path\To\Image.png, http://www.server.com/image.png and \\\server\folder\image.png all work as URLs.
 
 
 If there's a problem trying to load the image or parse the tag, the tag will be squiggly-underlined and hovering over this will show the error, e.g
@@ -39,7 +39,7 @@ If there's a problem trying to load the image or parse the tag, the tag will be 
 Image-comments don't really have anything to do with XML comments, but the format is convenient and it should be pretty straight-forward to transform them for Sandcastle documentation creation.
 
 
-The extension adds a command in the Tools menu to toggle image-comment display on or off **.
+The extension adds a command in the Tools menu to toggle image-comment display on or off.
 
 
 ### Uninstallation
@@ -64,7 +64,7 @@ There are two components to the extension:
 * ImageCommentsEditorComponent. Contains 97% of the functionality. 
 * ImageCommentsPackage. Adds a command to enable/disable functionality; VSIX definition.
 
-For testing information, see [.\Testing\Testing.html](./testing/testing.html)
+For testing information, see .\Testing\Testing.html
 ### Some known implementation issues
 The code is a bit rough - it may not need a rewrite from scratch, but there's a bunch of stuff to be done
 
@@ -75,4 +75,4 @@ The code is a bit rough - it may not need a rewrite from scratch, but there's a 
 * ...
 
 ## License
-Eclipse Public License v1.0. See [license text](license.txt) for details.
+Eclipse Public License v1.0. See [license text](http://github.com/lukesdm/image-comments/raw/master/License.txt) for details.
