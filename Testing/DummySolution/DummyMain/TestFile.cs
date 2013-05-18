@@ -5,7 +5,7 @@ namespace Parties
     {
         /// <summary>
         /// Recreate signal given Fourier components
-        /// <image url="C:\Temp\fourier.png" />
+        /// <image url="$(SolutionDir)\CommonImages\fourier.png" />
         /// </summary>
         public Signal ReconstituteSignal(double a0, double[,] a, double[,] b, double[] x, double L)
         {

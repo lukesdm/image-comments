@@ -18,19 +18,5 @@
             ////    new Thread(o => {MessageBox.Show(o.ToString());}).Start(ex);
             ////}
         }
-
-        // Classifies exception as critical (and unable to be handled) or not
-        // From http://bit.ly/QeAHTk
-        public static bool IsCritical(Exception ex) 
-        {
-          if (ex is OutOfMemoryException) return true;
-          if (ex is AppDomainUnloadedException) return true;
-          if (ex is BadImageFormatException) return true;
-          if (ex is CannotUnloadAppDomainException) return true;
-          if (ex is InvalidProgramException) return true;
-          if (ex is System.Threading.ThreadAbortException) 
-              return true;
-          return false;
-        }
     }
 }

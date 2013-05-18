@@ -190,8 +190,6 @@ namespace LM.ImageComments.EditorComponent
                     }
                     catch (Exception ex)
                     {
-                        if (ExceptionHandler.IsCritical(ex))
-                            throw;
                         // No expected exceptions, so tell user something is wrong.
                         ExceptionHandler.Notify(ex, true);
                     }

@@ -66,9 +66,6 @@ namespace LM.ImageComments.EditorComponent
             }
             catch (Exception ex)
             {
-                if (ExceptionHandler.IsCritical(ex)) 
-                    throw;
-
                 exception = ex;
                 return false;
             }
