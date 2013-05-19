@@ -18,6 +18,10 @@
         <Edition>Premium</Edition>
         <Edition>Pro</Edition>
       </VisualStudio>
+      <IsolatedShell Version="6.0">AtmelStudio</IsolatedShell>
+      <IsolatedShell Version="6.1">AtmelStudio</IsolatedShell>
+      <IsolatedShell Version="5.0">AvrStudio</IsolatedShell>
+      <IsolatedShell Version="5.1">AvrStudio</IsolatedShell>
     </SupportedProducts>
     <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
   </Identifier>
