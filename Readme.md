@@ -58,7 +58,7 @@ In VS, open the Extension Manager, select ImageComments, then click uninstall. A
 Requires: Visual Studio 2010 SP1 SDK
 
 ### Build instructions
-Providing VS2010 SP1 SDK is installed, you should be able to build by opening the solution and hitting F6, and start debugging with the VS Experimental Instance with F5.
+Providing VS2010 SP1 SDK is installed, you should be able to build by opening the solution and hitting F6, and start debugging with the VS Experimental Instance with F5. The 'Release' build configuration copies the .vsix package into the Solution's .\Output directory.
 
 ### Program structure
 It's a very small project and may be fairly self explanatory if you are familiar with Visual Studio editor extensions.
