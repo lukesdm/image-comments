@@ -36,6 +36,9 @@ If there's a problem trying to load the image or parse the tag, the tag will be 
 ![](http://lukesdm.github.com/image-comments/media/error-example-1.png)
 
 
+The languages currently supported are C#, C, C++ and VB. For VB though, replace the beginning `///` with `'''`.
+
+
 Image-comments don't really have anything to do with XML comments, but the format is convenient and it should be pretty straight-forward to transform them for Sandcastle documentation creation.
 
 
@@ -46,7 +49,7 @@ The extension adds a command in the Tools menu to toggle image-comment display o
 In VS, open the Extension Manager, select ImageComments, then click uninstall. A restart of VS is required.
 
 ### Some known issues
-* After adding an image-comment using a local image, you can't edit the image until VS is closed. (High priority fix).
+* After adding an image-comment using a local image, you can't edit the image until VS is closed. (High priority to fix).
 * The caret/selection highlight height on image-comment lines grows as high the image.
 * Image loading from HTTP sources usually doesn't work. But if you twiddle the tag to make it invalid then valid again, it works. It's probably due to treating the asynchronous image loading process as synchronous in the implementation (which works for local images).
 * You need to scroll/'bump' the editor window to see the effect of the on/off toggle command.
