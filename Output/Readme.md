@@ -1,1 +1,0 @@
-A copy of the VSIX will be created in here during a release build.
