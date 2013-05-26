@@ -103,17 +103,20 @@ namespace LM.ImageComments
             _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out document);
             var dte2 = (DTE2)Package.GetGlobalService(typeof (SDTE));
             ProjectItem projectItem = dte2.Solution.FindProjectItem(document.FilePath);
-                
-            string projectPath = projectItem.ContainingProject.FileName;
-            if (projectPath != "") // projectPath will be empty if file isn't part of a project.
+            
+            if (projectItem != null && projectItem.ContainingProject != null)
             {
-                _projectDirectory = Path.GetDirectoryName(projectPath) + @"\";
-            }
+                string projectPath = projectItem.ContainingProject.FileName;
+                if (projectPath != "") // projectPath will be empty if file isn't part of a project.
+                {
+                    _projectDirectory = Path.GetDirectoryName(projectPath) + @"\";
+                }
 
-            string solutionPath = dte2.Solution.FileName;
-            if (solutionPath != "") // solutionPath will be empty if project isn't part of a saved solution
-            {
-                _solutionDirectory = Path.GetDirectoryName(solutionPath) + @"\";
+                string solutionPath = dte2.Solution.FileName;
+                if (solutionPath != "") // solutionPath will be empty if project isn't part of a saved solution
+                {
+                    _solutionDirectory = Path.GetDirectoryName(solutionPath) + @"\";
+                }
             }
         }
     }
