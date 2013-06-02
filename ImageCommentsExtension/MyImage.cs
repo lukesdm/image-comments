@@ -1,5 +1,4 @@
-﻿using LM.ImageComments;
-namespace LM.ImageComments.EditorComponent
+﻿namespace LM.ImageComments.EditorComponent
 {
     using System;
     using System.Windows.Controls;
@@ -12,7 +11,8 @@ namespace LM.ImageComments.EditorComponent
     {
         private VariableExpander _variableExpander;
 
-        public MyImage(VariableExpander variableExpander) : base()
+        public MyImage(VariableExpander variableExpander)
+            : base()
         {
             if (variableExpander == null)
             {
@@ -20,9 +20,9 @@ namespace LM.ImageComments.EditorComponent
             }
             _variableExpander = variableExpander;
         }
-        
+
         public string Url { get; private set; }
-        
+
         /// <summary>
         /// Scale image if value is greater than 0, otherwise use source dimensions
         /// </summary>
@@ -61,7 +61,13 @@ namespace LM.ImageComments.EditorComponent
             {
                 //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
                 //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
-                this.Source = BitmapFrame.Create(new Uri(_variableExpander.ProcessText(imageUrl), UriKind.Absolute));
+                Uri uri = new Uri(_variableExpander.ProcessText(imageUrl), UriKind.Absolute);
+
+                if (uri.Scheme == "data")
+                    this.Source = BitmapFrame.Create(DataUriLoader.Load(uri));
+                else
+                    this.Source = BitmapFrame.Create(uri);
+
                 this.Url = imageUrl;
             }
             catch (Exception ex)
@@ -78,6 +84,6 @@ namespace LM.ImageComments.EditorComponent
             return Url;
         }
 
-        private  double _scale;
+        private double _scale;
     }
 }
