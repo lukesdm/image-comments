@@ -1,4 +1,4 @@
-namespace LM.RichComments.EditorComponent
+namespace LM.RichComments.EditorComponent.MEFHookup
 {
     using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Text.Editor;
@@ -11,7 +11,7 @@ namespace LM.RichComments.EditorComponent
     [Export(typeof(IWpfTextViewCreationListener))]
     [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
-    internal sealed class RichCommentItemManagerFactory : IWpfTextViewCreationListener
+    internal sealed class RichCommentManagerFactory : IWpfTextViewCreationListener
     {
         /// <summary>
         /// Defines the adornment layer for the adornment. This layer is ordered 
@@ -29,7 +29,7 @@ namespace LM.RichComments.EditorComponent
         /// <param name="textView">The <see cref="IWpfTextView"/> upon which the adornment should be placed</param>
         public void TextViewCreated(IWpfTextView textView)
         {
-            textView.Properties.GetOrCreateSingletonProperty<RichCommentItemManager>(() => new RichCommentItemManager(textView));
+            textView.Properties.GetOrCreateSingletonProperty<RichCommentManager>(() => new RichCommentManager(textView));
         }
     }
 }

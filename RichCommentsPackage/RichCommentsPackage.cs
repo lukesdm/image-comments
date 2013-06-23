@@ -32,7 +32,7 @@
             {
                 CommandID menuCommandID = new CommandID(GuidList.guidRichCommentsPackageCmdSet, (int)PkgCmdIDList.cmdidToggleRichComments);
                 MenuCommand menuItem = new MenuCommand(
-                    (sender, args) => { RichCommentItemManager.ToggleEnabled(); }, 
+                    (sender, args) => { RichCommentManager.ToggleEnabled(); }, 
                     menuCommandID);
                 mcs.AddCommand( menuItem );
             }

@@ -1,7 +1,6 @@
-﻿namespace LM.RichComments.EditorComponent
+﻿namespace LM.RichComments.EditorComponent.Utility
 {
     using System;
-    using LM.RichComments.EditorComponent.Utility;
 
     internal static class ExceptionHandler
     {

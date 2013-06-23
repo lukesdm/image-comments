@@ -4,7 +4,7 @@
     <Name>RichComments</Name>
     <Author>Luke McQuade</Author>
     <Version>1.0</Version>
-    <Description xml:space="preserve">Use images in code comments</Description>
+    <Description xml:space="preserve">Use rich media in code comments</Description>
     <Locale>1033</Locale>
     <InstalledByMsi>false</InstalledByMsi>
     <SupportedProducts>

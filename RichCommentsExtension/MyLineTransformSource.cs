@@ -9,9 +9,9 @@
     /// </summary>
     internal class MyLineTransformSource : ILineTransformSource
     {
-        private RichCommentItemManager _manager;
+        private RichCommentManager _manager;
 
-        public MyLineTransformSource(RichCommentItemManager manager)
+        public MyLineTransformSource(RichCommentManager manager)
         {
             _manager = manager;
         }
@@ -26,7 +26,7 @@
             LineTransform lineTransform; 
             
             // Look up Image for current line and increase line height as necessary
-            if (_manager.RichCommentItems.ContainsKey(lineNumber) && RichCommentItemManager.Enabled)
+            if (_manager.RichCommentItems.ContainsKey(lineNumber) && RichCommentManager.Enabled)
             {
                 double defaultHeight = line.DefaultLineTransform.BottomSpace;
                 IRichCommentItem richCommentItem = _manager.RichCommentItems[lineNumber];

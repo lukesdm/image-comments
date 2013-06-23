@@ -17,12 +17,12 @@ namespace LM.RichComments.EditorComponent
     /// <summary>
     /// Important class. Handles creation of rich comment adornments on appropriate lines and associated error tags.
     /// </summary>
-    public class RichCommentItemManager : ITagger<ErrorTag>, IDisposable
+    public class RichCommentManager : ITagger<ErrorTag>, IDisposable
     {
         /// <summary>
-        /// Initializes static members of the <see cref="RichCommentItemManager"/> class
+        /// Initializes static members of the <see cref="RichCommentManager"/> class
         /// </summary>
-        static RichCommentItemManager()
+        static RichCommentManager()
         {
             Enabled = true;
         }
@@ -50,8 +50,9 @@ namespace LM.RichComments.EditorComponent
         private bool _initialised1 = false;
         private bool _initialised2 = false;
         private List<ITagSpan<ErrorTag>> _errorTags;
+        private HashSet<IRichCommentParser> _parsers;
         
-        public RichCommentItemManager(IWpfTextView view)
+        public RichCommentManager(IWpfTextView view)
         {
             _view = view;
             _layer = view.GetAdornmentLayer("RichCommentLayer");
@@ -63,6 +64,10 @@ namespace LM.RichComments.EditorComponent
 
             _errorTags = new List<ITagSpan<ErrorTag>>();
             _variableExpander = new VariableExpander(_view);
+
+            _parsers = new HashSet<IRichCommentParser>();
+            _parsers.Add(new ImageItemParser());
+            // Add new parser types here!
         }
 
         private void contentTypeChangedHandler(object sender, ContentTypeChangedEventArgs e)
@@ -75,7 +80,7 @@ namespace LM.RichComments.EditorComponent
         /// </summary>
         private void layoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
         {
-            if (!RichCommentItemManager.Enabled)
+            if (!RichCommentManager.Enabled)
                 return;
 
             _errorTags.Clear();
@@ -122,34 +127,45 @@ namespace LM.RichComments.EditorComponent
 #pragma warning restore 219
 
             string lineText = line.Extent.GetText();
-            //string imageUrl;
-            //double scale;
-            IRichCommentItemParameters richCommentItemParameters;
-            string matchedText;
-            int matchIndex = RichCommentParser.Match(_contentTypeName, lineText, out matchedText);
-            if (matchIndex >= 0)
+
+            IRichCommentItemParameters richCommentItemParameters = null;
+            Exception parseException = null;
+            bool parsedSuccessfully = false;
+            int? xmlPosition = null;
+            foreach(IRichCommentParser parser in _parsers)
             {
-                // Get coordinates of text
-                int start = line.Extent.Start.Position + matchIndex;
-                int end = line.Start + (line.Extent.Length - 1);
-                var span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
-
-                Exception xmlParseException;
-                RichCommentParser.TryParse(matchedText, out richCommentItemParameters, out xmlParseException);
-
-                if (xmlParseException != null)
+                parsedSuccessfully = parser.TryParse(_contentTypeName, lineText, out richCommentItemParameters, out parseException, out xmlPosition);
+                if (parsedSuccessfully)
                 {
-                    if (RichCommentItems.ContainsKey(lineNumber))
-                    {
-                        RichCommentItems[lineNumber].RemoveFromAdornmentLayer(_layer);
-                        RichCommentItems.Remove(lineNumber);
-                    }
+                    break;
+                }
+            }
 
-                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("XML parse error", getErrorMessage(xmlParseException))));
+            // Get coordinates of xml (even if it's not valid)
+            SnapshotSpan span = new SnapshotSpan();
+            if (xmlPosition != null)
+            {
+                int start = line.Extent.Start.Position + (int)xmlPosition;
+                int end = line.Start + (line.Extent.Length - 1);
+                span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
+            }
 
-                    return;
+            // If there was a parsing exception, remove any existing item associated with the line.
+            if (parseException != null)
+            {
+                if (RichCommentItems.ContainsKey(lineNumber))
+                {
+                    RichCommentItems[lineNumber].RemoveFromAdornmentLayer(_layer);
+                    RichCommentItems.Remove(lineNumber);
                 }
 
+                _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("XML parse error", getErrorMessage(parseException))));
+
+                return;
+            }
+
+            if (parsedSuccessfully)
+            {
                 IRichCommentItem richCommentItem = null;
                 Exception itemLoadingException = null;
                 
@@ -162,7 +178,7 @@ namespace LM.RichComments.EditorComponent
                 }
                 else // No existing rich comment item, so create new one
                 {
-                    richCommentItem = RichCommentItemFactory.Create(richCommentItemParameters);
+                    richCommentItem = RichCommentItemFactory.Create(richCommentItemParameters, _variableExpander);
                     richCommentItem.Update(richCommentItemParameters, out itemLoadingException);
                     RichCommentItems.Add(lineNumber, richCommentItem);
                 }

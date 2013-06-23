@@ -1,4 +1,4 @@
-﻿namespace LM.RichComments.EditorComponent.Domain
+﻿namespace LM.RichComments.Domain
 {
     using System;
     using System.Windows.Controls;
@@ -9,7 +9,6 @@
     using Microsoft.VisualStudio.Text;
     using LM.RichComments;
     using LM.RichComments.Utility;
-    using LM.RichComments.Domain;
 
     /// <summary>
     /// Sub-class of Image with convenient URL-based Source changing
@@ -17,8 +16,10 @@
     internal class ImageItem : Image, IRichCommentItem
     {
         private VariableExpander _variableExpander;
+        // private Parameters _parameters; // TODO: Remove parameter duplication.
 
-        public ImageItem(VariableExpander variableExpander) : base()
+        public ImageItem(VariableExpander variableExpander)
+            : base()
         {
             if (variableExpander == null)
             {
@@ -134,10 +135,16 @@
         
         #endregion
 
-        class Parameters : IRichCommentItemParameters
+        internal class Parameters : IRichCommentItemParameters
         {
-            public string Url { get; set; }
-            public double Scale { get; set; }
+            public Parameters(string url, double scale = 0)
+            {
+                this.Url = url;
+                this.Scale = scale;
+            }
+
+            public string Url { get; private set; }
+            public double Scale { get; private set; }
 
             public Type RichCommentItemType
             {

@@ -1,4 +1,4 @@
-﻿namespace LM.RichComments.EditorComponent
+﻿namespace LM.RichComments.EditorComponent.MEFHookup
 {
     using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Utilities;
@@ -26,7 +26,7 @@
 
             Trace.Assert(textView is IWpfTextView);
 
-            RichCommentItemManager imageAdornmentManager = textView.Properties.GetOrCreateSingletonProperty<RichCommentItemManager>(() => new RichCommentItemManager((IWpfTextView)textView));
+            RichCommentManager imageAdornmentManager = textView.Properties.GetOrCreateSingletonProperty<RichCommentManager>(() => new RichCommentManager((IWpfTextView)textView));
             return imageAdornmentManager as ITagger<T>;
         }
     }

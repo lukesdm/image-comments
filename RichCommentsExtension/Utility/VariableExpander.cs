@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using LM.RichComments.EditorComponent.Utility;
 
 namespace LM.RichComments.Utility
 {

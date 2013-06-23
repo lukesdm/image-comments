@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudio.Text.Formatting;
 
-namespace LM.RichComments.EditorComponent
+namespace LM.RichComments.EditorComponent.MEFHookup
 {
     [Export(typeof(ILineTransformSourceProvider))]
     [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic")]
@@ -12,7 +12,7 @@ namespace LM.RichComments.EditorComponent
     {
         ILineTransformSource ILineTransformSourceProvider.Create(IWpfTextView view)
         {
-            RichCommentItemManager manager = view.Properties.GetOrCreateSingletonProperty<RichCommentItemManager>(() => new RichCommentItemManager(view));
+            RichCommentManager manager = view.Properties.GetOrCreateSingletonProperty<RichCommentManager>(() => new RichCommentManager(view));
             return new MyLineTransformSource(manager);
         }
     }
