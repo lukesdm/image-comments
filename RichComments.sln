@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCommentsEditorComponent", "ImageCommentsExtension\ImageCommentsEditorComponent.csproj", "{715F244C-3EC6-453A-AC90-08052478A3BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichCommentsEditorComponent", "ImageCommentsExtension\RichCommentsEditorComponent.csproj", "{715F244C-3EC6-453A-AC90-08052478A3BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCommentsPackage", "ImageCommentsPackage\ImageCommentsPackage.csproj", "{4CC0EE9F-8A7C-4653-9A55-B2F9BB3DDCE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RichCommentsPackage", "ImageCommentsPackage\RichCommentsPackage.csproj", "{4CC0EE9F-8A7C-4653-9A55-B2F9BB3DDCE2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{715F244C-3EC6-453A-AC90-08052478A3BF} = {715F244C-3EC6-453A-AC90-08052478A3BF}
 	EndProjectSection

@@ -1,16 +1,17 @@
-﻿namespace LM.ImageComments.EditorComponent
+﻿namespace LM.RichComments.EditorComponent
 {
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Formatting;
+    using LM.RichComments.Domain;
 
     /// <summary>
-    /// Resizes image comment lines in the editor
+    /// Resizes rich comment lines in the editor
     /// </summary>
     internal class MyLineTransformSource : ILineTransformSource
     {
-        private ImageAdornmentManager _manager;
+        private RichCommentItemManager _manager;
 
-        public MyLineTransformSource(ImageAdornmentManager manager)
+        public MyLineTransformSource(RichCommentItemManager manager)
         {
             _manager = manager;
         }
@@ -25,11 +26,11 @@
             LineTransform lineTransform; 
             
             // Look up Image for current line and increase line height as necessary
-            if (_manager.Images.ContainsKey(lineNumber) && ImageAdornmentManager.Enabled)
+            if (_manager.RichCommentItems.ContainsKey(lineNumber) && RichCommentItemManager.Enabled)
             {
                 double defaultHeight = line.DefaultLineTransform.BottomSpace;
-                MyImage image = _manager.Images[lineNumber];
-                lineTransform = new LineTransform(0, image.Height + defaultHeight, 1.0);
+                IRichCommentItem richCommentItem = _manager.RichCommentItems[lineNumber];
+                lineTransform = new LineTransform(0, richCommentItem.Height + defaultHeight, 1.0);
 
                 imageOnLine = true;
             }

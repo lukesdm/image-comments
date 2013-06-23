@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudio.Text.Formatting;
 
-namespace LM.ImageComments.EditorComponent
+namespace LM.RichComments.EditorComponent
 {
     [Export(typeof(ILineTransformSourceProvider))]
     [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic")]
@@ -12,7 +12,7 @@ namespace LM.ImageComments.EditorComponent
     {
         ILineTransformSource ILineTransformSourceProvider.Create(IWpfTextView view)
         {
-            ImageAdornmentManager manager = view.Properties.GetOrCreateSingletonProperty<ImageAdornmentManager>(() => new ImageAdornmentManager(view));
+            RichCommentItemManager manager = view.Properties.GetOrCreateSingletonProperty<RichCommentItemManager>(() => new RichCommentItemManager(view));
             return new MyLineTransformSource(manager);
         }
     }

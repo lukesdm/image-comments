@@ -1,4 +1,4 @@
-# ImageComments (a Visual Studio Extension)
+# RichComments (a Visual Studio Extension)
 
 ## Overview
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
@@ -13,7 +13,7 @@ Disclaimer: This project is a WIP and it's pretty rough around the edges. Please
 Requires: Visual Studio 2010/2012 Standard, Premium etc.  
 
 ### Download/Installation
-[Download](http://github.com/lukesdm/image-comments/raw/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
+[Download](http://github.com/lukesdm/image-comments/raw/master/Output/RichComments.vsix), then double-click/activate the VSIX file in Explorer.
 ### How to use
 Image-comments are declared with: 
 
@@ -46,7 +46,7 @@ The extension adds a command in the Tools menu to toggle image-comment display o
 
 
 ### Uninstallation
-In VS, open the Extension Manager, select ImageComments, then click uninstall. A restart of VS is required.
+In VS, open the Extension Manager, select RichComments, then click uninstall. A restart of VS is required.
 
 ### Some known issues
 * After adding an image-comment using a local image, you can't edit the image until VS is closed. (High priority to fix).
@@ -64,8 +64,8 @@ Providing VS2010 SP1 SDK is installed, you should be able to build by opening th
 It's a very small project and may be fairly self explanatory if you are familiar with Visual Studio editor extensions.
 There are two components to the extension:
 
-* ImageCommentsEditorComponent. Contains 97% of the functionality. 
-* ImageCommentsPackage. Adds a command to enable/disable functionality; VSIX definition.
+* RichCommentsEditorComponent. Contains 97% of the functionality. 
+* RichCommentsPackage. Adds a command to enable/disable functionality; VSIX definition.
 
 For testing information, see .\Testing\Testing.html
 ### Some known implementation issues

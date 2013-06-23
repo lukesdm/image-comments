@@ -1,23 +1,24 @@
-﻿namespace LM.ImageComments.EditorComponent
+﻿namespace LM.RichComments.EditorComponent
 {
     using System;
     using System.Text.RegularExpressions;
     using System.Xml;
     using System.Xml.Linq;
+    using LM.RichComments.Domain;
 
     // TODO [?]: Could make this a non-static class and use instances, but ensure a new instance is created when content type of a view is changed.
-    internal static class ImageCommentParser
+    internal static class RichCommentParser
     {
         // Initalise regex objects
-        static ImageCommentParser()
+        static RichCommentParser()
         {
             string xmlImageTagPattern = @"<image.*>";
             
             string cSharpCommentPattern = @"///.*";
-            _csharpImageCommentRegex = new Regex(cSharpCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
+            _csharpRichCommentRegex = new Regex(cSharpCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
             string vbCommentPattern = @"'.*";
-            _vbImageCommentRegex = new Regex(vbCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
+            _vbRichCommentRegex = new Regex(vbCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
             _xmlImageTagRegex = new Regex(xmlImageTagPattern, RegexOptions.Compiled);
         }
@@ -25,7 +26,7 @@
         /// <summary>
         /// Tries to match Regex on input text
         /// </summary>
-        /// <returns>Position in line at start of matched image comment. -1 if not matched</returns>
+        /// <returns>Position in line at start of matched rich comment. -1 if not matched</returns>
         public static int Match(string contentTypeName, string lineText, out string matchedText)
         {
             Match match = null;
@@ -33,10 +34,10 @@
             {
                 case "C/C++":
                 case "CSharp":
-                    match = _csharpImageCommentRegex.Match(lineText);
+                    match = _csharpRichCommentRegex.Match(lineText);
                     break;
                 case "Basic":
-                    match = _vbImageCommentRegex.Match(lineText);
+                    match = _vbRichCommentRegex.Match(lineText);
                     break;
                 //TODO: Add support for more languages
                 default:
@@ -53,8 +54,14 @@
                 return match.Index;
             }
         }
+        
+        public static bool TryParse(string matchedText, out IRichCommentItemParameters richCommentItemParameters, out Exception exception)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
-        /// Looks for well formed image comment in line of text and tries to parse parameters
+        /// Looks for well formed rich comment in line of text and tries to parse parameters
         /// </summary>
         /// <param name="matchedText">Input: Line of text in editor window</param>
         /// <param name="imageUrl">Output: URL of image</param>
@@ -99,8 +106,8 @@
             }
         }
 
-        private static Regex _csharpImageCommentRegex;
-        private static Regex _vbImageCommentRegex;
+        private static Regex _csharpRichCommentRegex;
+        private static Regex _vbRichCommentRegex;
         private static Regex _xmlImageTagRegex;
     }
 }

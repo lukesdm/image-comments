@@ -2,11 +2,11 @@
 // MUST match PkgCmdID.h
 using System;
 
-namespace LM.ImageComments.Package
+namespace LM.RichComments.Package
 {
     static class PkgCmdIDList
     {
-        public const uint cmdidToggleImageComments =        0x100;
+        public const uint cmdidToggleRichComments =        0x100;
 
 
     };

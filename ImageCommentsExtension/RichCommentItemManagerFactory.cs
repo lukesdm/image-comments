@@ -1,4 +1,4 @@
-namespace LM.ImageComments.EditorComponent
+namespace LM.RichComments.EditorComponent
 {
     using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Text.Editor;
@@ -11,25 +11,25 @@ namespace LM.ImageComments.EditorComponent
     [Export(typeof(IWpfTextViewCreationListener))]
     [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
-    internal sealed class ImageAdornmentManagerFactory : IWpfTextViewCreationListener
+    internal sealed class RichCommentItemManagerFactory : IWpfTextViewCreationListener
     {
         /// <summary>
         /// Defines the adornment layer for the adornment. This layer is ordered 
         /// after the selection layer in the Z-order
         /// </summary>
         [Export(typeof(AdornmentLayerDefinition))]
-        [Name("ImageCommentLayer")]
+        [Name("RichCommentLayer")]
         [Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Text)]
         [TextViewRole(PredefinedTextViewRoles.Document)]
         public AdornmentLayerDefinition editorAdornmentLayer = null;
 
         /// <summary>
-        /// Instantiates a ImageAdornment manager when a textView is created.
+        /// Instantiates a RichCommentItem manager when a textView is created.
         /// </summary>
         /// <param name="textView">The <see cref="IWpfTextView"/> upon which the adornment should be placed</param>
         public void TextViewCreated(IWpfTextView textView)
         {
-            textView.Properties.GetOrCreateSingletonProperty<ImageAdornmentManager>(() => new ImageAdornmentManager(textView));
+            textView.Properties.GetOrCreateSingletonProperty<RichCommentItemManager>(() => new RichCommentItemManager(textView));
         }
     }
 }

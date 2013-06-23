@@ -1,4 +1,4 @@
-namespace LM.ImageComments.EditorComponent
+namespace LM.RichComments.EditorComponent
 {
     using System;
     using System.Collections.Generic;
@@ -10,35 +10,38 @@ namespace LM.ImageComments.EditorComponent
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Formatting;
     using Microsoft.VisualStudio.Text.Tagging;
+    using LM.RichComments.EditorComponent.Utility;
+    using LM.RichComments.Utility;
+    using LM.RichComments.Domain;
 
     /// <summary>
-    /// Important class. Handles creation of image adornments on appropriate lines and associated error tags.
+    /// Important class. Handles creation of rich comment adornments on appropriate lines and associated error tags.
     /// </summary>
-    internal class ImageAdornmentManager : ITagger<ErrorTag>, IDisposable
+    public class RichCommentItemManager : ITagger<ErrorTag>, IDisposable
     {
         /// <summary>
-        /// Initializes static members of the <see cref="ImageAdornmentManager"/> class
+        /// Initializes static members of the <see cref="RichCommentItemManager"/> class
         /// </summary>
-        static ImageAdornmentManager()
+        static RichCommentItemManager()
         {
             Enabled = true;
         }
 
         /// <summary>
-        /// Enables or disables image comments. TODO: Make enable/disable mechanism better, e.g. specific to each editor instance and persistent
+        /// Enables or disables rich comments. TODO: Make enable/disable mechanism better, e.g. specific to each editor instance and persistent
         /// </summary>
         public static void ToggleEnabled()
         {
             Enabled = !Enabled;
-            string message = string.Format("Image comments {0}. Scroll editor window(s) to update.",
+            string message = string.Format("Rich comments {0}. Scroll editor window(s) to update.",
                 Enabled ? "enabled" : "disabled");
             UIMessage.Show(message);
         }
 
         public static bool Enabled { get; set; }
         
-        // Dictionary to map line number to image
-        public Dictionary<int, MyImage> Images { get; set; }
+        // Dictionary to map line number to rich comment item
+        internal Dictionary<int, IRichCommentItem> RichCommentItems { get; set; }
 
         private IAdornmentLayer _layer;
         private IWpfTextView _view;
@@ -48,11 +51,11 @@ namespace LM.ImageComments.EditorComponent
         private bool _initialised2 = false;
         private List<ITagSpan<ErrorTag>> _errorTags;
         
-        public ImageAdornmentManager(IWpfTextView view)
+        public RichCommentItemManager(IWpfTextView view)
         {
             _view = view;
-            _layer = view.GetAdornmentLayer("ImageCommentLayer");
-            Images = new Dictionary<int, MyImage>();
+            _layer = view.GetAdornmentLayer("RichCommentLayer");
+            RichCommentItems = new Dictionary<int, IRichCommentItem>();
             _view.LayoutChanged += layoutChangedHandler;
 
             _contentTypeName = view.TextBuffer.ContentType.TypeName;
@@ -72,7 +75,7 @@ namespace LM.ImageComments.EditorComponent
         /// </summary>
         private void layoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
         {
-            if (!ImageAdornmentManager.Enabled)
+            if (!RichCommentItemManager.Enabled)
                 return;
 
             _errorTags.Clear();
@@ -93,8 +96,8 @@ namespace LM.ImageComments.EditorComponent
                 }
             }
 
-            // Sometimes, on loading a file in an editor view, the line transform gets triggered before the image adornments 
-            // have been added, so the lines don't resize to the image height. So here's a workaround:
+            // Sometimes, on loading a file in an editor view, the line transform gets triggered before the rich comment item adornments 
+            // have been added, so the lines don't resize to the rich comment item height. So here's a workaround:
             // Changing the zoom level triggers the required update.
             // Need to do it twice - once to trigger the event, and again to change it back to the user's expected level.
             if (!_initialised1)
@@ -110,7 +113,7 @@ namespace LM.ImageComments.EditorComponent
         }
 
         /// <summary>
-        /// Scans text line for matching image comment signature, then adds new or updates existing image adornment
+        /// Scans text line for matching rich comment signature, then adds new or updates existing rich comment item adornment
         /// </summary>
         private void createVisuals(ITextViewLine line, int lineNumber)
         {
@@ -119,10 +122,11 @@ namespace LM.ImageComments.EditorComponent
 #pragma warning restore 219
 
             string lineText = line.Extent.GetText();
-            string imageUrl;
-            double scale;
+            //string imageUrl;
+            //double scale;
+            IRichCommentItemParameters richCommentItemParameters;
             string matchedText;
-            int matchIndex = ImageCommentParser.Match(_contentTypeName, lineText, out matchedText);
+            int matchIndex = RichCommentParser.Match(_contentTypeName, lineText, out matchedText);
             if (matchIndex >= 0)
             {
                 // Get coordinates of text
@@ -131,14 +135,14 @@ namespace LM.ImageComments.EditorComponent
                 var span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
 
                 Exception xmlParseException;
-                ImageCommentParser.TryParse(matchedText, out imageUrl, out scale, out xmlParseException);
+                RichCommentParser.TryParse(matchedText, out richCommentItemParameters, out xmlParseException);
 
                 if (xmlParseException != null)
                 {
-                    if (Images.ContainsKey(lineNumber))
+                    if (RichCommentItems.ContainsKey(lineNumber))
                     {
-                        _layer.RemoveAdornment(Images[lineNumber]);
-                        Images.Remove(lineNumber);
+                        RichCommentItems[lineNumber].RemoveFromAdornmentLayer(_layer);
+                        RichCommentItems.Remove(lineNumber);
                     }
 
                     _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("XML parse error", getErrorMessage(xmlParseException))));
@@ -146,49 +150,40 @@ namespace LM.ImageComments.EditorComponent
                     return;
                 }
 
-                MyImage image = null;
-                Exception imageLoadingException = null;
+                IRichCommentItem richCommentItem = null;
+                Exception itemLoadingException = null;
                 
-                // Check for and update existing image
-                MyImage existingImage = Images.ContainsKey(lineNumber) ? Images[lineNumber] : null;
-                if (existingImage != null)
+                // Check for and update existing rich comment item
+                IRichCommentItem existingRichCommentItem = RichCommentItems.ContainsKey(lineNumber) ? RichCommentItems[lineNumber] : null;
+                if (existingRichCommentItem != null)
                 {
-                    image = existingImage;
-                    if (existingImage.Url == imageUrl && existingImage.Scale != scale) // URL same but scale changed
-                    {
-                        existingImage.Scale = scale;
-                    }
-                    else if (existingImage.Url != imageUrl) // URL different, so set new source
-                    {
-                        existingImage.TrySet(imageUrl, scale, out imageLoadingException);
-                    }
+                    existingRichCommentItem.Update(richCommentItemParameters, out itemLoadingException);
+                    richCommentItem = existingRichCommentItem;
                 }
-                else // No existing image, so create new one
+                else // No existing rich comment item, so create new one
                 {
-                    image = new MyImage(_variableExpander);
-                    image.TrySet(imageUrl, scale, out imageLoadingException);
-                    Images.Add(lineNumber, image);
+                    richCommentItem = RichCommentItemFactory.Create(richCommentItemParameters);
+                    richCommentItem.Update(richCommentItemParameters, out itemLoadingException);
+                    RichCommentItems.Add(lineNumber, richCommentItem);
                 }
 
-                // Position image and add as adornment
-                if (imageLoadingException == null)
+                // Position rich comment item and add as adornment
+                if (itemLoadingException == null)
                 {
-                    
                     Geometry g = _view.TextViewLines.GetMarkerGeometry(span);
-                    if (g == null) // Exceptional case when image dimensions are massive (e.g. specifying very large scale factor)
+                    
+                    if (g == null) // Exceptional case when adornment dimensions are massive (e.g. specifying very large image scale factor)
                     {
-                        throw new InvalidOperationException("Couldn't get source code line geometry. Is the loaded image massive?");
+                        throw new InvalidOperationException("Couldn't get source code line geometry. Is the loaded rich comment item massive?");
                     }
                     double textLeft = g.Bounds.Left;
                     double textBottom = line.TextBottom;
-                    Canvas.SetLeft(image, textLeft);
-                    Canvas.SetTop(image, textBottom);
 
-                    // Add image to editor view
+                    // Add rich comment item to editor view
                     try
                     {
-                        _layer.RemoveAdornment(image);
-                        _layer.AddAdornment(AdornmentPositioningBehavior.TextRelative, line.Extent, null, image, null);
+                        richCommentItem.RemoveFromAdornmentLayer(_layer);
+                        richCommentItem.AddToAdornmentLayer(_layer, textLeft, textBottom, line.Extent);
                     }
                     catch (Exception ex)
                     {
@@ -198,38 +193,42 @@ namespace LM.ImageComments.EditorComponent
                 }
                 else
                 {
-                    if (Images.ContainsKey(lineNumber))
-                        Images.Remove(lineNumber);
+                    if (RichCommentItems.ContainsKey(lineNumber))
+                        RichCommentItems.Remove(lineNumber);
 
-                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("Trouble loading image", getErrorMessage(imageLoadingException))));
+                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("Trouble loading rich comment item", getErrorMessage(itemLoadingException))));
                 }
                 imageDetected = true;
             }
             else
             {
-                if (Images.ContainsKey(lineNumber))
-                    Images.Remove(lineNumber);
+                if (RichCommentItems.ContainsKey(lineNumber))
+                    RichCommentItems.Remove(lineNumber);
             }
-        }
-
-        private string getErrorMessage(Exception exception)
-        {
-            Trace.WriteLine("Problem parsing comment text or loading image...\n" + exception);
-
-            string message;
-            if (exception is XmlException)
-                message = "Problem with comment format: " + exception.Message;
-            else if (exception is NotSupportedException)
-                message = exception.Message + "\nThis problem could be caused by a corrupt, invalid or unsupported image file.";
-            else
-                message = exception.Message;
-            return message;
         }
 
         private void unsubscribeFromViewerEvents()
         {
             _view.LayoutChanged -= layoutChangedHandler;
             _view.TextBuffer.ContentTypeChanged -= contentTypeChangedHandler;
+        }
+
+        private string getErrorMessage(Exception exception, IRichCommentItem richCommentItem = null)
+        {
+            Trace.WriteLine("Problem parsing comment text or loading rich comment item...\n" + exception);
+
+            if (richCommentItem != null)
+            {
+                return richCommentItem.MakeFriendlyErrorMessage(exception);
+            }
+            else if (exception is XmlException)
+            {
+                return "Problem with comment format: " + exception.Message;
+            }
+            else
+            {
+                return exception.Message;
+            }
         }
 
         #region ITagger<ErrorTag> Members

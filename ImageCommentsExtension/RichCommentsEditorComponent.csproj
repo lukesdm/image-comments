@@ -9,8 +9,8 @@
     <ProjectGuid>{715F244C-3EC6-453A-AC90-08052478A3BF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LM.ImageComments</RootNamespace>
-    <AssemblyName>ImageCommentsExtension</AssemblyName>
+    <RootNamespace>LM.RichComments</RootNamespace>
+    <AssemblyName>RichCommentsExtension</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
@@ -83,15 +83,19 @@
   <ItemGroup>
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="ErrorTaggerProvider.cs" />
-    <Compile Include="MyImage.cs" />
+    <Compile Include="Domain\IRichCommentItem.cs" />
+    <Compile Include="Domain\IRichCommentItemParameters.cs" />
+    <Compile Include="Domain\ImageItem.cs" />
     <Compile Include="MyLineTransformSource.cs" />
     <Compile Include="MyLineTransformSourceProvider.cs" />
-    <Compile Include="ImageAdornmentManagerFactory.cs" />
-    <Compile Include="ImageCommentParser.cs" />
+    <Compile Include="Domain\IRichCommentParser.cs" />
+    <Compile Include="Domain\RichCommentItemFactory.cs" />
+    <Compile Include="RichCommentItemManagerFactory.cs" />
+    <Compile Include="RichCommentParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ImageAdornmentManager.cs" />
-    <Compile Include="UIMessage.cs" />
-    <Compile Include="VariableExpander.cs" />
+    <Compile Include="RichCommentItemManager.cs" />
+    <Compile Include="Utility\UIMessage.cs" />
+    <Compile Include="Utility\VariableExpander.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />

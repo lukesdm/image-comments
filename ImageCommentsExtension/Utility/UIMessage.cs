@@ -1,4 +1,4 @@
-﻿namespace LM.ImageComments.EditorComponent
+﻿namespace LM.RichComments.EditorComponent.Utility
 {
     using System;
     using Microsoft.VisualStudio;
@@ -24,7 +24,7 @@
             int gotPane = outWindow.GetPane(ref debugPaneGuid, out debugPane);
             if (gotPane == VSConstants.S_OK)
             {
-                debugPane.OutputString("[ImageComments Extension] " + message + "\n");
+                debugPane.OutputString("[RichComments Extension] " + message + "\n");
                 debugPane.Activate(); // Brings this pane into view
             }
         }

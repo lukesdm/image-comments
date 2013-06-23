@@ -6,13 +6,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using EnvDTE;
 using EnvDTE80;
-using LM.ImageComments.EditorComponent;
+using LM.RichComments.EditorComponent;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace LM.ImageComments
+namespace LM.RichComments.Utility
 {
     /// <summary>
     /// This class provides variable substitution for strings, e.g. replacing '$(ProjectDir)' with 'C:\MyProject\'

@@ -10,20 +10,20 @@
   <!--Definition of some VSCT specific constants. In this sample we use it for the IDs inside the guidOfficeIcon group. -->
   <Extern href="msobtnid.h"/>
 
-  <Commands package="guidImageCommentsPackagePkg">
+  <Commands package="guidRichCommentsPackagePkg">
     <Groups>
       <!--TODO [?]: Put the command somewhere appropriate -->
-      <Group guid="guidImageCommentsPackageCmdSet" id="ImageCommentsGroup" priority="0x0600">
+      <Group guid="guidRichCommentsPackageCmdSet" id="RichCommentsGroup" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
       </Group>
     </Groups>
     
     <Buttons>
-      <Button guid="guidImageCommentsPackageCmdSet" id="cmdidToggleImageComments" priority="0x0100" type="Button">
-        <Parent guid="guidImageCommentsPackageCmdSet" id="ImageCommentsGroup" />
+      <Button guid="guidRichCommentsPackageCmdSet" id="cmdidToggleRichComments" priority="0x0100" type="Button">
+        <Parent guid="guidRichCommentsPackageCmdSet" id="RichCommentsGroup" />
         <!--<Icon guid="guidImages" id="bmpPic1" />-->
         <Strings>
-          <CommandName>cmdidToggleImageComments</CommandName>
+          <CommandName>cmdidToggleRichComments</CommandName>
           <ButtonText>Toggle Image Comments</ButtonText>
         </Strings>
       </Button>
@@ -32,15 +32,15 @@
 
   <!--TODO [?]: Set editor to something more specific -->
   <KeyBindings>
-    <KeyBinding guid="guidImageCommentsPackageCmdSet" id="cmdidToggleImageComments" editor="guidVSStd97" key1="M" mod1="Control Shift"/>
+    <KeyBinding guid="guidRichCommentsPackageCmdSet" id="cmdidToggleRichComments" editor="guidVSStd97" key1="M" mod1="Control Shift"/>
   </KeyBindings>
 
   <Symbols>
     
-    <GuidSymbol name="guidImageCommentsPackagePkg" value="{2980fb0d-ba9d-4373-9178-d27a98f0c9b1}" />
-    <GuidSymbol name="guidImageCommentsPackageCmdSet" value="{75607cbc-1a36-4075-8eb7-3ca58ae87f84}">
-      <IDSymbol name="ImageCommentsGroup" value="0x1020" />
-      <IDSymbol name="cmdidToggleImageComments" value="0x0100" />
+    <GuidSymbol name="guidRichCommentsPackagePkg" value="{2980fb0d-ba9d-4373-9178-d27a98f0c9b1}" />
+    <GuidSymbol name="guidRichCommentsPackageCmdSet" value="{75607cbc-1a36-4075-8eb7-3ca58ae87f84}">
+      <IDSymbol name="RichCommentsGroup" value="0x1020" />
+      <IDSymbol name="cmdidToggleRichComments" value="0x0100" />
     </GuidSymbol>
   </Symbols>
 

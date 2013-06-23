@@ -1,26 +1,26 @@
-﻿namespace LM.ImageComments.Package
+﻿namespace LM.RichComments.Package
 {
     using System;
     using System.ComponentModel.Design;
     using System.Diagnostics;
     using System.Globalization;
     using System.Runtime.InteropServices;
-    using LM.ImageComments.EditorComponent;
+    using LM.RichComments.EditorComponent;
     using Microsoft.VisualStudio.Shell;
 
     /// <summary>
-    /// Package containing image comment command
+    /// Package containing rich comment command
     /// </summary>
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(GuidList.guidImageCommentsPackagePkgString)]
-    public sealed class ImageCommentsPackage : Microsoft.VisualStudio.Shell.Package
+    [Guid(GuidList.guidRichCommentsPackagePkgString)]
+    public sealed class RichCommentsPackage : Microsoft.VisualStudio.Shell.Package
     {
         #region Package Members
 
         /// <summary>
-        /// Creates and registers image comment enable/disable toggle command 
+        /// Creates and registers rich comment enable/disable toggle command 
         /// </summary>
         protected override void Initialize()
         {
@@ -30,9 +30,9 @@
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if ( null != mcs )
             {
-                CommandID menuCommandID = new CommandID(GuidList.guidImageCommentsPackageCmdSet, (int)PkgCmdIDList.cmdidToggleImageComments);
+                CommandID menuCommandID = new CommandID(GuidList.guidRichCommentsPackageCmdSet, (int)PkgCmdIDList.cmdidToggleRichComments);
                 MenuCommand menuItem = new MenuCommand(
-                    (sender, args) => { ImageAdornmentManager.ToggleEnabled(); }, 
+                    (sender, args) => { RichCommentItemManager.ToggleEnabled(); }, 
                     menuCommandID);
                 mcs.AddCommand( menuItem );
             }

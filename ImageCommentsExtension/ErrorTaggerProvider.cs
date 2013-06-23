@@ -1,4 +1,4 @@
-﻿namespace LM.ImageComments.EditorComponent
+﻿namespace LM.RichComments.EditorComponent
 {
     using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Utilities;
@@ -26,7 +26,7 @@
 
             Trace.Assert(textView is IWpfTextView);
 
-            ImageAdornmentManager imageAdornmentManager = textView.Properties.GetOrCreateSingletonProperty<ImageAdornmentManager>(() => new ImageAdornmentManager((IWpfTextView)textView));
+            RichCommentItemManager imageAdornmentManager = textView.Properties.GetOrCreateSingletonProperty<RichCommentItemManager>(() => new RichCommentItemManager((IWpfTextView)textView));
             return imageAdornmentManager as ITagger<T>;
         }
     }
