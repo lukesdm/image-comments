@@ -117,16 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ImageComment_ShouldParse1" xml:space="preserve">
-    <value>///&lt;image url="C:\a.jpg" scale="0.1" /&gt;</value>
-  </data>
-  <data name="ImageComment_ShouldParse2" xml:space="preserve">
-    <value>///&lt;Image url="C:\a.jpg" scale="0.1" /&gt;</value>
-  </data>
-  <data name="ImageComment_ShouldParse3" xml:space="preserve">
-    <value>///  &lt;image url="C:\a.jpg" scale="0.1" /&gt;  ...</value>
-  </data>
-  <data name="ImageComment_ShouldParse4" xml:space="preserve">
-    <value>    ///&lt;image url="C:\a.jpg" scale="0.1" /&gt;</value>
-  </data>
 </root>

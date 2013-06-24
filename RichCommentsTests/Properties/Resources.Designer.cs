@@ -59,41 +59,5 @@ namespace RichCommentsTests.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ///&lt;image url=&quot;C:\a.jpg&quot; scale=&quot;0.1&quot; /&gt;.
-        /// </summary>
-        internal static string ImageComment_ShouldParse1 {
-            get {
-                return ResourceManager.GetString("ImageComment_ShouldParse1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ///&lt;Image url=&quot;C:\a.jpg&quot; scale=&quot;0.1&quot; /&gt;.
-        /// </summary>
-        internal static string ImageComment_ShouldParse2 {
-            get {
-                return ResourceManager.GetString("ImageComment_ShouldParse2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ///  &lt;image url=&quot;C:\a.jpg&quot; scale=&quot;0.1&quot; /&gt;  ....
-        /// </summary>
-        internal static string ImageComment_ShouldParse3 {
-            get {
-                return ResourceManager.GetString("ImageComment_ShouldParse3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to     ///&lt;image url=&quot;C:\a.jpg&quot; scale=&quot;0.1&quot; /&gt;.
-        /// </summary>
-        internal static string ImageComment_ShouldParse4 {
-            get {
-                return ResourceManager.GetString("ImageComment_ShouldParse4", resourceCulture);
-            }
-        }
     }
 }
