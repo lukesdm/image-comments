@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using Microsoft.VisualStudio.Text.Editor;
 using System.Diagnostics;
 using System.Security;
+using LM.RichComments.Utility;
+using System.Runtime.InteropServices;
 
 namespace LM.RichComments.Domain
 {
@@ -14,15 +16,12 @@ namespace LM.RichComments.Domain
     {
         public WebItem() : base()
         {
-            _parameters = new Parameters(0, 0, ""); 
+            _parameters = new Parameters(0, 0, @"."); 
             _webBrowser = new WebBrowser();
             this.Content = _webBrowser;
-            //...
-            //throw new NotImplementedException();
         }
 
         private WebBrowser _webBrowser;
-
         private Parameters _parameters;
 
         public void AddToAdornmentLayer(Microsoft.VisualStudio.Text.Editor.IAdornmentLayer adornmentLayer, double lineTextLeft, double lineTextBottom, Microsoft.VisualStudio.Text.SnapshotSpan lineExtent)
@@ -60,13 +59,21 @@ namespace LM.RichComments.Domain
                 _webBrowser.Width = _parameters.Width;
                 _webBrowser.Height = _parameters.Height;
             }
-            catch (SecurityException ex)
+            catch (SecurityException ex) // Thrown when URL is in a forbidden location
             {
                 itemUpdateException = ex;
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException ex) // Thrown when there was some internal problem. TODO: Better handling for this
             {
-                itemUpdateException = ex;  
+                itemUpdateException = ex;
+            }
+            catch (ArgumentException ex) // Thrown when the URI is relative
+            {
+                itemUpdateException = ex;
+            }
+            catch (COMException ex) // Thrown when there was some internal problem. TODO: Better handling for this
+            {
+                itemUpdateException = ex;
             }
         }
 
@@ -84,7 +91,7 @@ namespace LM.RichComments.Domain
                 this.Height = height;
                 try
                 {
-                    this.Url = new Uri(uriString);
+                    this.Url = new Uri(uriString, UriKind.RelativeOrAbsolute);
                 }
                 catch (Exception ex)
                 {

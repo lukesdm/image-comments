@@ -10,6 +10,18 @@ namespace LM.RichComments.Domain
 {
     class WebItemParser : IRichCommentParser
     {
+        public WebItemParser(VariableExpander variableExpander)
+        {
+            this.VariableExpander = variableExpander;
+        }
+
+        public VariableExpander VariableExpander { get; private set; }
+
+        public string ExpectedTagName
+        {
+            get { return "webpage"; }
+        }
+
         public bool TryParse(string contentTypeName, string lineText, out IRichCommentItemParameters richCommentItemParameters, out Exception parseException, out int? xmlStartPosition)
         {
             richCommentItemParameters = null;
@@ -40,13 +52,27 @@ namespace LM.RichComments.Domain
                     return false;
                 }
 
-                webPageUrlString = urlAttribute.Value;
+                webPageUrlString = this.VariableExpander.ProcessText(urlAttribute.Value);
 
                 XAttribute widthAttr = webPageElement.Attribute("width");
-                double.TryParse(widthAttr.Value, out width);
+                try
+                {
+                    width = double.Parse(widthAttr.Value);
+                }
+                catch
+                {
+                    throw new ArgumentException("Couldn't find width attribute or convert it to a number.");
+                }
                 
                 XAttribute heightAttr = webPageElement.Attribute("height");
-                double.TryParse(heightAttr.Value, out height);
+                try
+                {
+                    height = double.Parse(heightAttr.Value);
+                }
+                catch
+                {
+                    throw new ArgumentException("Couldn't find height attribute or convert it to a number.");
+                }
                 
                 richCommentItemParameters = new WebItem.Parameters(width, height, webPageUrlString);
                 return true;
@@ -56,11 +82,6 @@ namespace LM.RichComments.Domain
                 parseException = ex;
                 return false;
             }
-        }
-
-        public string ExpectedTagName
-        {
-            get { return "webpage"; }
         }
     }
 }

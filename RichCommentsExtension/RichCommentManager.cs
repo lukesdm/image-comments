@@ -66,8 +66,8 @@ namespace LM.RichComments.EditorComponent
             _variableExpander = new VariableExpander(_view);
 
             _parsers = new HashSet<IRichCommentParser>();
-            _parsers.Add(new ImageItemParser());
-            _parsers.Add(new WebItemParser());
+            _parsers.Add(new ImageItemParser(_variableExpander));
+            _parsers.Add(new WebItemParser(_variableExpander));
             // Add new parser types here!
         }
 

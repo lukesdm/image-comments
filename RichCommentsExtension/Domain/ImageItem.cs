@@ -15,17 +15,12 @@
     /// </summary>
     internal class ImageItem : Image, IRichCommentItem
     {
-        private VariableExpander _variableExpander;
         // private Parameters _parameters; // TODO: Remove parameter duplication.
 
-        public ImageItem(VariableExpander variableExpander)
+        public ImageItem()
             : base()
         {
-            if (variableExpander == null)
-            {
-                throw new ArgumentNullException("variableExpander");
-            }
-            _variableExpander = variableExpander;
+
         }
         
         public string Url { get; private set; }
@@ -68,7 +63,7 @@
             {
                 //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
                 //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
-                this.Source = BitmapFrame.Create(new Uri(_variableExpander.ProcessText(imageUrl), UriKind.Absolute));
+                this.Source = BitmapFrame.Create(new Uri(imageUrl, UriKind.Absolute));
                 this.Url = imageUrl;
             }
             catch (Exception ex)

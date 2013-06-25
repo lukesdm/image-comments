@@ -10,10 +10,18 @@ namespace LM.RichComments.Domain
 {
     class ImageItemParser : IRichCommentParser
     {
+
+        public ImageItemParser(VariableExpander variableExpander)
+        {
+            this.VariableExpander = variableExpander;
+        }
+
         public string ExpectedTagName 
         { 
             get { return "image"; }
         }
+
+        public VariableExpander VariableExpander { get; private set; }
 
         public bool TryParse(string contentTypeName, string lineText, out IRichCommentItemParameters itemParameters, out Exception parseException, out int? xmlStartPosition)
         {

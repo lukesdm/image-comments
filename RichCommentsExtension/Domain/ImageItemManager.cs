@@ -12,7 +12,8 @@ namespace LM.RichComments.Domain
     {
         public ImageItemManager()
         {
-            this.CommentParser = new ImageItemParser();
+        //    this.CommentParser = new ImageItemParser();
+            throw new NotImplementedException();
         }
 
         public IRichCommentParser CommentParser { get; private set; }

@@ -23,5 +23,7 @@ namespace LM.RichComments.Domain
         /// The XML tag name to match during parse. Keep lowercase for simplicity.
         /// </summary>
         string ExpectedTagName { get; }
+
+        VariableExpander VariableExpander { get; }
     }
 }

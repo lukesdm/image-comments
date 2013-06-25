@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LM.RichComments.Domain;
 using RichCommentsTests.Properties;
 using RichCommentsTests.DataSchema;
+using LM.RichComments.Utility;
+using RichCommentsTests.Stubs;
 
 namespace RichCommentsTests.Integration
 {
@@ -26,7 +28,7 @@ namespace RichCommentsTests.Integration
         public void Initialize()
         {
             _contentTypeName = "CSharp";
-            _imageItemParser = new ImageItemParser();
+            _imageItemParser = new ImageItemParser(new VariableExpander(new WpfTextViewStub()));
         }
 
         [DataSource("System.Data.SqlServerCe.3.5", "data source=|DataDirectory|\\TestData.sdf", TestData.ParserData.NAME, DataAccessMethod.Sequential), DeploymentItem("RichCommentsTests\\TestData.sdf"), TestMethod]
@@ -70,7 +72,7 @@ namespace RichCommentsTests.Integration
 
             WebItem.Parameters expectedParameters = new WebItem.Parameters(200, 100, @"C:\a.htm");
 
-            WebItemParser webItemParser = new WebItemParser();
+            WebItemParser webItemParser = new WebItemParser(new VariableExpander(new WpfTextViewStub()));
             Exception parseException;
             int? xmlStartPosition;
             IRichCommentItemParameters itemParameters;

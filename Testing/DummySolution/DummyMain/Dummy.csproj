@@ -50,10 +50,13 @@
     <Compile Include="TestFile_2.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WebPageCommentTest.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Content Include="CommentPics\Koala.jpg" />
+    <Content Include="HtmlComments\HTMLPage1.htm" />
+    <Content Include="HtmlComments\HTMLPage2.htm" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
