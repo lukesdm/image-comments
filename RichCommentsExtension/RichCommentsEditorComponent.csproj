@@ -84,6 +84,8 @@
     <Compile Include="Domain\ImageItemManager.cs" />
     <Compile Include="Domain\ImageItemParser.cs" />
     <Compile Include="Domain\IRichCommentItemManager.cs" />
+    <Compile Include="Domain\WebItem.cs" />
+    <Compile Include="Domain\WebItemParser.cs" />
     <Compile Include="Utility\ExceptionHandler.cs" />
     <Compile Include="MEFHookup\ErrorTaggerProvider.cs" />
     <Compile Include="Domain\IRichCommentItem.cs" />
