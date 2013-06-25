@@ -4,30 +4,38 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.VisualStudio.Text.Editor;
+using System.Diagnostics;
+using System.Security;
 
 namespace LM.RichComments.Domain
 {
-    class WebItem : Control, IRichCommentItem
+    class WebItem : ContentControl, IRichCommentItem
     {
         public WebItem() : base()
         {
+            _parameters = new Parameters(0, 0, ""); 
             _webBrowser = new WebBrowser();
-            
+            this.Content = _webBrowser;
             //...
-
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private WebBrowser _webBrowser;
 
+        private Parameters _parameters;
+
         public void AddToAdornmentLayer(Microsoft.VisualStudio.Text.Editor.IAdornmentLayer adornmentLayer, double lineTextLeft, double lineTextBottom, Microsoft.VisualStudio.Text.SnapshotSpan lineExtent)
         {
-            throw new NotImplementedException();
+            // TODO: This code will probably be shared for all richcommentitem types... put in abstract class.
+            Canvas.SetLeft(this, lineTextLeft);
+            Canvas.SetTop(this, lineTextBottom);
+            adornmentLayer.AddAdornment(AdornmentPositioningBehavior.TextRelative, lineExtent, null, this, null);
         }
 
         public void RemoveFromAdornmentLayer(Microsoft.VisualStudio.Text.Editor.IAdornmentLayer adornmentLayer)
         {
-            throw new NotImplementedException();
+            adornmentLayer.RemoveAdornment(this);
         }
 
         public void Deactivate()
@@ -40,23 +48,57 @@ namespace LM.RichComments.Domain
             throw new NotImplementedException();
         }
 
-        public void Update(IRichCommentItemParameters parameters, out Exception exception)
+        public void Update(IRichCommentItemParameters parameters, out Exception itemUpdateException)
         {
-            throw new NotImplementedException();
+            itemUpdateException = null;
+            _parameters = parameters as Parameters;
+            Debug.Assert(_parameters != null);
+
+            try
+            {
+                _webBrowser.Source = _parameters.Url;
+                _webBrowser.Width = _parameters.Width;
+                _webBrowser.Height = _parameters.Height;
+            }
+            catch (SecurityException ex)
+            {
+                itemUpdateException = ex;
+            }
+            catch (InvalidOperationException ex)
+            {
+                itemUpdateException = ex;  
+            }
         }
+
 
         public double Height
         {
-            get { throw new NotImplementedException(); }
+            get { return _parameters.Height; }
         }
 
-        class Parameters : IRichCommentItemParameters
+        public class Parameters : IRichCommentItemParameters
         {
+            public Parameters(double width, double height, string uriString)
+            {
+                this.Width = width;
+                this.Height = height;
+                try
+                {
+                    this.Url = new Uri(uriString);
+                }
+                catch (Exception ex)
+                {
+                    throw new ArgumentException("Specified URL is invalid.", "uriString", ex);
+                }
+            }
+            public double Height { get; private set; }
+            public double Width { get; private set; }
+            public Uri Url { get; private set; }
+            
             public Type RichCommentItemType
             {
                 get { return typeof(WebItem); }
             }
         }
-
     }
 }

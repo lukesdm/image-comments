@@ -17,7 +17,7 @@ namespace LM.RichComments.Domain
         /// <param name="parseException">Output: An exception encountered while parsing, or null. NOTE: parsing can be unsuccesful without an exception being thrown.</param>
         /// <returns>true if parameters were successfully parsed, false otherwise.</returns>
         /// <remarks>Performance critical: this method will be called for *every line* of text in the Editor view when it becomes visible.</remarks>
-        bool TryParse(string contentTypeName, string text, out IRichCommentItemParameters richCommentItemParameters, out Exception parseException, out int? xmlStartPosition);
+        bool TryParse(string contentTypeName, string lineText, out IRichCommentItemParameters richCommentItemParameters, out Exception parseException, out int? xmlStartPosition);
 
         /// <summary>
         /// The XML tag name to match during parse. Keep lowercase for simplicity.

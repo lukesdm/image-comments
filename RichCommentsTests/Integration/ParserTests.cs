@@ -61,5 +61,29 @@ namespace RichCommentsTests.Integration
             Assert.AreEqual(expectedExceptionMessage, (parseException ?? new Exception("")).Message);
             Assert.AreEqual(expectedXmlStartPosition, xmlStartPosition);
         }
+
+        [TestMethod, Description("Tests a single, known good fully specified example string. TODO: More tests.")]
+        public void WebItemParserTest() 
+        {
+            // ARRANGE
+            string lineText = @"/// <webpage url=""C:\a.htm"" width=""200"" height=""100"" />";
+
+            WebItem.Parameters expectedParameters = new WebItem.Parameters(200, 100, @"C:\a.htm");
+
+            WebItemParser webItemParser = new WebItemParser();
+            Exception parseException;
+            int? xmlStartPosition;
+            IRichCommentItemParameters itemParameters;
+            
+            // ACT
+            bool parsedSuccesfully = webItemParser.TryParse(_contentTypeName, lineText, out itemParameters, out parseException, out xmlStartPosition);
+            WebItem.Parameters actualParameters = (WebItem.Parameters)itemParameters;
+            
+            // ASSERT
+            Assert.IsTrue(parsedSuccesfully);
+            Assert.AreEqual(expectedParameters.Url, actualParameters.Url);
+            Assert.AreEqual(expectedParameters.Width, actualParameters.Width);
+            Assert.AreEqual(expectedParameters.Height, actualParameters.Height);
+        }
     }
 }

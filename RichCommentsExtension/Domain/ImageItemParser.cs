@@ -31,8 +31,6 @@ namespace LM.RichComments.Domain
                 return false;
             }
 
-            
-
             string imageUrl;
             double imageScale = 0; // See ImageItem.cs for explanation of default value here
 
