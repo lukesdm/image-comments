@@ -24,6 +24,7 @@ namespace LM.RichComments.Domain
         /// </summary>
         string ExpectedTagName { get; }
 
-        VariableExpander VariableExpander { get; }
+        //VariableExpander VariableExpander { get; }
+        UrlProcessor UrlProcessor { get; }
     }
 }

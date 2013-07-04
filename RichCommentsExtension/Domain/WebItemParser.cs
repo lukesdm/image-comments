@@ -10,12 +10,10 @@ namespace LM.RichComments.Domain
 {
     class WebItemParser : IRichCommentParser
     {
-        public WebItemParser(VariableExpander variableExpander)
+        public WebItemParser(UrlProcessor urlProcessor)
         {
-            this.VariableExpander = variableExpander;
+            this.UrlProcessor = urlProcessor;
         }
-
-        public VariableExpander VariableExpander { get; private set; }
 
         public string ExpectedTagName
         {
@@ -36,7 +34,8 @@ namespace LM.RichComments.Domain
                 return false;
             }
 
-            string webPageUrlString;
+            Uri webpageUri;
+            //string webPageUrlString;
             double width;
             double height;
 
@@ -52,7 +51,7 @@ namespace LM.RichComments.Domain
                     return false;
                 }
 
-                webPageUrlString = this.VariableExpander.ProcessText(urlAttribute.Value);
+                webpageUri = this.UrlProcessor.MakeUrlFromString(urlAttribute.Value);
 
                 XAttribute widthAttr = webPageElement.Attribute("width");
                 try
@@ -74,7 +73,7 @@ namespace LM.RichComments.Domain
                     throw new ArgumentException("Couldn't find height attribute or convert it to a number.");
                 }
                 
-                richCommentItemParameters = new WebItem.Parameters(width, height, webPageUrlString);
+                richCommentItemParameters = new WebItem.Parameters(width, height, webpageUri);
                 return true;
             }
             catch (Exception ex)
@@ -83,5 +82,7 @@ namespace LM.RichComments.Domain
                 return false;
             }
         }
+
+        public UrlProcessor UrlProcessor { get; private set; }
     }
 }

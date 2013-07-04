@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace RichCommentsTests.Stubs
 {
-    class WpfTextViewStub : IWpfTextView
+    class WpfTextViewStubX : IWpfTextView
     {
 
         public System.Windows.Media.Brush Background

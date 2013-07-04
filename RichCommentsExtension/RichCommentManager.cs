@@ -45,7 +45,8 @@ namespace LM.RichComments.EditorComponent
 
         private IAdornmentLayer _layer;
         private IWpfTextView _view;
-        private VariableExpander _variableExpander;
+        //private VariableExpander _variableExpander;
+        private UrlProcessor _urlProcessor;
         private string _contentTypeName;
         private bool _initialised1 = false;
         private bool _initialised2 = false;
@@ -63,11 +64,13 @@ namespace LM.RichComments.EditorComponent
             _view.TextBuffer.ContentTypeChanged += contentTypeChangedHandler;
 
             _errorTags = new List<ITagSpan<ErrorTag>>();
-            _variableExpander = new VariableExpander(_view);
+            //_variableExpander = new VariableExpander(_view);
+            var variableExpander = new VariableExpander(_view);
+            _urlProcessor = new UrlProcessor(view);
 
             _parsers = new HashSet<IRichCommentParser>();
-            _parsers.Add(new ImageItemParser(_variableExpander));
-            _parsers.Add(new WebItemParser(_variableExpander));
+            _parsers.Add(new ImageItemParser(_urlProcessor));
+            _parsers.Add(new WebItemParser(_urlProcessor));
             // Add new parser types here!
         }
 
@@ -179,7 +182,7 @@ namespace LM.RichComments.EditorComponent
                 }
                 else // No existing rich comment item, so create new one
                 {
-                    richCommentItem = RichCommentItemFactory.Create(richCommentItemParameters, _variableExpander);
+                    richCommentItem = RichCommentItemFactory.Create(richCommentItemParameters);
                     richCommentItem.Update(richCommentItemParameters, out itemLoadingException);
                     RichCommentItems.Add(lineNumber, richCommentItem);
                 }

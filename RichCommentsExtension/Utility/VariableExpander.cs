@@ -103,7 +103,11 @@ namespace LM.RichComments.Utility
             ITextDocument document;
             _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out document);
             var dte2 = (DTE2)Package.GetGlobalService(typeof (SDTE));
-            ProjectItem projectItem = dte2.Solution.FindProjectItem(document.FilePath);
+            ProjectItem projectItem = null;
+            if (dte2 != null) // dte2 will be null in unit tests
+            {
+                projectItem = dte2.Solution.FindProjectItem(document.FilePath);
+            }
             
             if (projectItem != null && projectItem.ContainingProject != null)
             {

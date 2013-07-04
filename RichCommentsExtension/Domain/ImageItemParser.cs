@@ -11,9 +11,10 @@ namespace LM.RichComments.Domain
     class ImageItemParser : IRichCommentParser
     {
 
-        public ImageItemParser(VariableExpander variableExpander)
+        public ImageItemParser(UrlProcessor urlProcessor)
         {
-            this.VariableExpander = variableExpander;
+            //this.VariableExpander = variableExpander;
+            this.UrlProcessor = urlProcessor;
         }
 
         public string ExpectedTagName 
@@ -21,7 +22,7 @@ namespace LM.RichComments.Domain
             get { return "image"; }
         }
 
-        public VariableExpander VariableExpander { get; private set; }
+        //public VariableExpander VariableExpander { get; private set; }
 
         public bool TryParse(string contentTypeName, string lineText, out IRichCommentItemParameters itemParameters, out Exception parseException, out int? xmlStartPosition)
         {
@@ -71,5 +72,8 @@ namespace LM.RichComments.Domain
                 return false;
             }
         }
+
+
+        public UrlProcessor UrlProcessor { get; private set; }
     }
 }

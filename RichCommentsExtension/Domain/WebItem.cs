@@ -16,7 +16,7 @@ namespace LM.RichComments.Domain
     {
         public WebItem() : base()
         {
-            _parameters = new Parameters(0, 0, @"."); 
+            _parameters = new Parameters(0, 0, new Uri("none.html", UriKind.RelativeOrAbsolute)); 
             _webBrowser = new WebBrowser();
             this.Content = _webBrowser;
         }
@@ -85,18 +85,11 @@ namespace LM.RichComments.Domain
 
         public class Parameters : IRichCommentItemParameters
         {
-            public Parameters(double width, double height, string uriString)
+            public Parameters(double width, double height, Uri url)
             {
                 this.Width = width;
                 this.Height = height;
-                try
-                {
-                    this.Url = new Uri(uriString, UriKind.RelativeOrAbsolute);
-                }
-                catch (Exception ex)
-                {
-                    throw new ArgumentException("Specified URL is invalid.", "uriString", ex);
-                }
+                this.Url = url;
             }
             public double Height { get; private set; }
             public double Width { get; private set; }

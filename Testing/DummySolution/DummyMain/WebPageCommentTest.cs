@@ -12,5 +12,5 @@ namespace Dummy
     {
     }
 
-    /// <webpage url="$(ProjectDir)HtmlComments\HTMLPage2.htm" height="300" width="600" />
+    /// <webpage url="HtmlComments\HTMLPage2.htm" height="300" width="600" />
 }

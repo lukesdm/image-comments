@@ -28,7 +28,8 @@ namespace RichCommentsTests.Integration
         public void Initialize()
         {
             _contentTypeName = "CSharp";
-            _imageItemParser = new ImageItemParser(new VariableExpander(new WpfTextViewStub()));
+            var viewStub = new WpfTextViewStub();
+            _imageItemParser = new ImageItemParser(new UrlProcessor(viewStub));
         }
 
         [DataSource("System.Data.SqlServerCe.3.5", "data source=|DataDirectory|\\TestData.sdf", TestData.ParserData.NAME, DataAccessMethod.Sequential), DeploymentItem("RichCommentsTests\\TestData.sdf"), TestMethod]
@@ -70,9 +71,9 @@ namespace RichCommentsTests.Integration
             // ARRANGE
             string lineText = @"/// <webpage url=""C:\a.htm"" width=""200"" height=""100"" />";
 
-            WebItem.Parameters expectedParameters = new WebItem.Parameters(200, 100, @"C:\a.htm");
-
-            WebItemParser webItemParser = new WebItemParser(new VariableExpander(new WpfTextViewStub()));
+            WebItem.Parameters expectedParameters = new WebItem.Parameters(200, 100, new Uri(@"C:\a.htm"));
+            var view = new WpfTextViewStub();
+            WebItemParser webItemParser = new WebItemParser(new UrlProcessor(view));
             Exception parseException;
             int? xmlStartPosition;
             IRichCommentItemParameters itemParameters;
