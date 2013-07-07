@@ -16,6 +16,7 @@ namespace RichCommentsTests.Integration
     {
         private TestContext _testContext;
         private string _contentTypeName;
+        UrlProcessor _urlProcessor;
         ImageItemParser _imageItemParser;
 
         public TestContext TestContext
@@ -29,7 +30,8 @@ namespace RichCommentsTests.Integration
         {
             _contentTypeName = "CSharp";
             var viewStub = new WpfTextViewStub();
-            _imageItemParser = new ImageItemParser(new UrlProcessor(viewStub));
+            _urlProcessor = new UrlProcessor(viewStub);
+            _imageItemParser = new ImageItemParser(_urlProcessor);
         }
 
         [DataSource("System.Data.SqlServerCe.3.5", "data source=|DataDirectory|\\TestData.sdf", TestData.ParserData.NAME, DataAccessMethod.Sequential), DeploymentItem("RichCommentsTests\\TestData.sdf"), TestMethod]
@@ -41,7 +43,7 @@ namespace RichCommentsTests.Integration
             bool expectedToParse = bool.Parse(_testContext.DataRow[TestData.ParserData.ShouldBeParsable].ToString());
 
             ImageItem.Parameters expectedParameters = new ImageItem.Parameters(
-                _testContext.DataRow[TestData.ParserData.ExpectedParameter1].ToString(),
+                _urlProcessor.MakeUrlFromString(_testContext.DataRow[TestData.ParserData.ExpectedParameter1].ToString()),
                 Convert.ToDouble(_testContext.DataRow[TestData.ParserData.ExpectedParameter2]));
             
             int expectedXmlStartPosition = Convert.ToInt32(_testContext.DataRow[TestData.ParserData.ExpectedXmlPosition]);

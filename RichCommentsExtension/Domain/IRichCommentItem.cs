@@ -38,6 +38,6 @@ namespace LM.RichComments.Domain
         /// <summary>
         /// The item's height (px)
         /// </summary>
-        double Height { get; }
+        double ItemHeight { get; }
     }
 }

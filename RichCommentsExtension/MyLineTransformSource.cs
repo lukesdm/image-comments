@@ -30,7 +30,7 @@
             {
                 double defaultHeight = line.DefaultLineTransform.BottomSpace;
                 IRichCommentItem richCommentItem = _manager.RichCommentItems[lineNumber];
-                lineTransform = new LineTransform(0, richCommentItem.Height + defaultHeight, 1.0);
+                lineTransform = new LineTransform(0, richCommentItem.ItemHeight + defaultHeight, 1.0);
 
                 imageOnLine = true;
             }

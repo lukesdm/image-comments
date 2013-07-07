@@ -15,40 +15,40 @@
     /// </summary>
     internal class ImageItem : Image, IRichCommentItem
     {
-        // private Parameters _parameters; // TODO: Remove parameter duplication.
+        private Parameters _parameters;
 
         public ImageItem()
             : base()
         {
-
+            _parameters = new Parameters(null);
         }
         
-        public string Url { get; private set; }
+        //public string Url { get; private set; }
         
         /// <summary>
         /// Scale image if value is greater than 0, otherwise use source dimensions
         /// </summary>
-        public double Scale
-        {
-            get { return _scale; }
-            set
-            {
-                _scale = value;
-                if (this.Source != null)
-                {
-                    if (value > 0)
-                    {
-                        this.Width = this.Source.Width * value;
-                        this.Height = this.Source.Height * value;
-                    }
-                    else
-                    {
-                        this.Width = this.Source.Width;
-                        this.Height = this.Source.Height;
-                    }
-                }
-            }
-        }
+        //public double Scale
+        //{
+        //    get { return _scale; }
+        //    set
+        //    {
+        //        _scale = value;
+        //        if (this.Source != null)
+        //        {
+        //            if (value > 0)
+        //            {
+        //                this.Width = this.Source.Width * value;
+        //                this.Height = this.Source.Height * value;
+        //            }
+        //            else
+        //            {
+        //                this.Width = this.Source.Width;
+        //                this.Height = this.Source.Height;
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Sets image source and size (by scale factor)
@@ -56,31 +56,41 @@
         /// <param name="scale">If > 0, scales the image by the specified amount, otherwise uses source image dimensions</param>
         /// <param name="exception">Is set to the Exception instance if image couldn't be loaded, otherwise null</param>
         /// <returns>Returns true if image was succesfully loaded, otherwise false</returns>
-        public bool TrySet(string imageUrl, double scale, out Exception exception)
+        public bool TryUpdateSource(Uri imageUrl, out Exception exception)
         {
             exception = null;
             try
             {
                 //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
                 //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
-                this.Source = BitmapFrame.Create(new Uri(imageUrl, UriKind.Absolute));
-                this.Url = imageUrl;
+                this.Source = BitmapFrame.Create(imageUrl);
             }
             catch (Exception ex)
             {
                 exception = ex;
                 return false;
             }
-            this.Scale = scale;
+            
             return true;
         }
 
-        public override string ToString()
+        private void resize()
         {
-            return Url;
+            if (this.Source == null)
+            {
+                return;
+            }
+
+            this.Width = this.Source.Width * _parameters.Scale;
+            this.Height = this.Source.Height * _parameters.Scale;
         }
 
-        private  double _scale;
+        //public override string ToString()
+        //{
+        //    return Url;
+        //}
+
+        //private  double _scale;
 
         #region IRichCommentItem members
 
@@ -108,14 +118,14 @@
             Debug.Assert(newParameters != null);
             loadingException = null;
 
-            if (this.Url == newParameters.Url && this.Scale != newParameters.Scale) // URL same but scale changed
+            if (_parameters.Url != newParameters.Url) // URL different, so update image source
             {
-                this.Scale = newParameters.Scale;
+                this.TryUpdateSource(newParameters.Url, out loadingException);
             }
-            else if (this.Url != newParameters.Url) // URL different, so set new source
-            {
-                this.TrySet(newParameters.Url, newParameters.Scale, out loadingException);
-            }
+
+            _parameters = newParameters;
+
+            resize();
         }
 
         public string MakeFriendlyErrorMessage(Exception exception)
@@ -127,19 +137,32 @@
                 message = exception.Message;
             return message;
         }
+
+        public double ItemHeight 
+        {
+            get
+            {
+                if (this.Source == null)
+                {
+                    return 0;
+                }
+
+                return this.Source.Height * _parameters.Scale;
+            }
+        }
         
         #endregion
 
         internal class Parameters : IRichCommentItemParameters
         {
-            public Parameters(string url, double scale = 0)
+            public Parameters(Uri url, double scale = 1.0)
             {
                 this.Url = url;
                 this.Scale = scale;
             }
 
-            public string Url { get; private set; }
-            public double Scale { get; private set; }
+            public Uri Url { get; private set; }
+            public double Scale { get; set; }
 
             public Type RichCommentItemType
             {

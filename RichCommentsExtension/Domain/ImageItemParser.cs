@@ -40,7 +40,7 @@ namespace LM.RichComments.Domain
                 return false;
             }
 
-            string imageUrl;
+            Uri imageUrl;
             double imageScale = 0; // See ImageItem.cs for explanation of default value here
 
             // Parse XML element contents
@@ -54,8 +54,8 @@ namespace LM.RichComments.Domain
                     parseException = new XmlException("url attribute not specified.");
                     return false;
                 }
-                
-                imageUrl = urlAttribute.Value;
+
+                imageUrl = this.UrlProcessor.MakeUrlFromString(urlAttribute.Value);
                 
                 XAttribute scaleAttr = imageElement.Attribute("scale");
                 if (scaleAttr != null)

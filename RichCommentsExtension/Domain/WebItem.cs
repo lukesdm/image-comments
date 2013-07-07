@@ -16,7 +16,7 @@ namespace LM.RichComments.Domain
     {
         public WebItem() : base()
         {
-            _parameters = new Parameters(0, 0, new Uri("none.html", UriKind.RelativeOrAbsolute)); 
+            _parameters = new Parameters(0, 0, new Uri("about:blank", UriKind.RelativeOrAbsolute)); 
             _webBrowser = new WebBrowser();
             this.Content = _webBrowser;
         }
@@ -78,7 +78,7 @@ namespace LM.RichComments.Domain
         }
 
 
-        public double Height
+        public double ItemHeight
         {
             get { return _parameters.Height; }
         }
