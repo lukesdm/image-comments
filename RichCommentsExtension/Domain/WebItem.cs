@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Security;
 using LM.RichComments.Utility;
 using System.Runtime.InteropServices;
+using Awesomium.Windows.Controls;
+using System.IO;
 
 namespace LM.RichComments.Domain
 {
@@ -17,11 +19,12 @@ namespace LM.RichComments.Domain
         public WebItem() : base()
         {
             _parameters = new Parameters(0, 0, new Uri("about:blank", UriKind.RelativeOrAbsolute)); 
-            _webBrowser = new WebBrowser();
+            _webBrowser = new WebControl();
             this.Content = _webBrowser;
         }
 
-        private WebBrowser _webBrowser;
+        //private WebBrowser _webBrowser;
+        private WebControl _webBrowser;
         private Parameters _parameters;
 
         public void AddToAdornmentLayer(Microsoft.VisualStudio.Text.Editor.IAdornmentLayer adornmentLayer, double lineTextLeft, double lineTextBottom, Microsoft.VisualStudio.Text.SnapshotSpan lineExtent)
@@ -100,5 +103,29 @@ namespace LM.RichComments.Domain
                 get { return typeof(WebItem); }
             }
         }
+
+        // TODO: Refactor - put this in a more suitable place.
+        #region load dependencies
+        
+        static WebItem()
+        {
+            loadDependencies();
+        }
+
+        private static void loadDependencies()
+        {
+            string[] dependencyFilenames = { 
+                "Awesomium.Core.dll", 
+                "Awesomium.Windows.Controls.dll" };
+
+            string extensionFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            foreach (string dependencyFilename in dependencyFilenames)
+            {
+                System.Reflection.Assembly.LoadFrom(string.Format(@"{0}\{1}", extensionFolder, dependencyFilename));
+            }
+
+        }
+
+        #endregion
     }
 }

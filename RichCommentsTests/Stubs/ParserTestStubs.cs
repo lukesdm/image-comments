@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
+#pragma warning disable 0067 // Ignore 'not used' warnings for stubbed members
+
 namespace RichCommentsTests.Stubs
 {
     class WpfTextViewStub : IWpfTextView
@@ -527,3 +529,5 @@ namespace RichCommentsTests.Stubs
         #endregion unimplemented
     }
 }
+
+#pragma warning restore 0067

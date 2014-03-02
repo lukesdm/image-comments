@@ -24,12 +24,10 @@
     <WarningLevel>4</WarningLevel>
     <CopyVsixExtensionFiles>False</CopyVsixExtensionFiles>
     <CopyVsixExtensionLocation>C:\Temp\Out</CopyVsixExtensionLocation>
-	
-	<!-- LM - some custom bits -->
-	<StartAction>Program</StartAction>
+    <!-- LM - some custom bits -->
+    <StartAction>Program</StartAction>
     <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
     <StartArguments>/rootsuffix Exp</StartArguments>
-	
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -127,6 +125,14 @@
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Dependencies\Awesomium\awesomium_process">
+      <Link>awesomium_process</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\inspector.pak">
+      <Link>inspector.pak</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -141,6 +147,63 @@
     <None Include="Resources\Images_32bit.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Dependencies\Awesomium\avcodec-53.dll">
+      <Link>avcodec-53.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\avformat-53.dll">
+      <Link>avformat-53.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\avutil-51.dll">
+      <Link>avutil-51.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\Awesomium.Core.dll">
+      <Link>Awesomium.Core.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\Awesomium.Core.XML">
+      <Link>Awesomium.Core.XML</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\awesomium.dll">
+      <Link>awesomium.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\Awesomium.Windows.Controls.dll">
+      <Link>Awesomium.Windows.Controls.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\Awesomium.Windows.Controls.XML">
+      <Link>Awesomium.Windows.Controls.XML</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\Awesomium.Windows.Forms.dll">
+      <Link>Awesomium.Windows.Forms.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\Awesomium.Windows.Forms.XML">
+      <Link>Awesomium.Windows.Forms.XML</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\icudt.dll">
+      <Link>icudt.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\libEGL.dll">
+      <Link>libEGL.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\libGLESv2.dll">
+      <Link>libGLESv2.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Dependencies\Awesomium\xinput9_1_0.dll">
+      <Link>xinput9_1_0.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Resource Include="Readme.txt" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>

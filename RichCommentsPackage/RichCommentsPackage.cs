@@ -7,6 +7,8 @@
     using System.Runtime.InteropServices;
     using LM.RichComments.EditorComponent;
     using Microsoft.VisualStudio.Shell;
+    using System.Reflection;
+    using System.IO;
 
     /// <summary>
     /// Package containing rich comment command
@@ -35,8 +37,10 @@
                     (sender, args) => { RichCommentManager.ToggleEnabled(); }, 
                     menuCommandID);
                 mcs.AddCommand( menuItem );
+
             }
         }
+
         #endregion
     }
 }
