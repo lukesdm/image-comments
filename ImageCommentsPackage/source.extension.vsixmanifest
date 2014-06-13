@@ -1,4 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="ImageComments..460de558-ad02-457f-b04f-398787baf147" Version="1.0" Language="en-US" Publisher="lukesdm" />
+    <DisplayName>ImageComments</DisplayName>
+    <Description xml:space="preserve">Add image based comments</Description>
+    <MoreInfo>https://github.com/lukesdm/image-comments</MoreInfo>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0]" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+  </Dependencies>
+  <Assets>
+    <Asset d:Source="Project" Type="Microsoft.VisualStudio.MefComponent" d:ProjectName="ImageCommentsEditorComponent" Path="|ImageCommentsEditorComponent|" d:VsixSubPath="ProjectTemplates" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" d:VsixSubPath="ProjectTemplates" />
+  </Assets>
+</PackageManifest>
+
+<!--?xml version="1.0" encoding="utf-8"?>
 <Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
   <Identifier Id="2980fb0d-ba9d-4373-9178-d27a98f0c9b1">
     <Name>ImageComments</Name>
@@ -18,6 +38,11 @@
         <Edition>Premium</Edition>
         <Edition>Pro</Edition>
       </VisualStudio>
+      <VisualStudio Version="12.0">
+        <Edition>Ultimate</Edition>
+        <Edition>Premium</Edition>
+        <Edition>Pro</Edition>
+      </VisualStudio>
     </SupportedProducts>
     <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
   </Identifier>
@@ -30,4 +55,4 @@
     <VsPackage>|%CurrentProject%;PkgdefProjectOutputGroup|</VsPackage>
     <MefComponent>|ImageCommentsEditorComponent|</MefComponent>
   </Content>
-</Vsix>
+</Vsix-->
