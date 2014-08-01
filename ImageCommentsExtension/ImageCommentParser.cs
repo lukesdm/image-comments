@@ -1,6 +1,7 @@
 ﻿namespace LM.ImageComments.EditorComponent
 {
     using System;
+    using System.Globalization;
     using System.Text.RegularExpressions;
     using System.Xml;
     using System.Xml.Linq;
@@ -83,7 +84,7 @@
                     imageUrl = srcAttr.Value;
                     XAttribute scaleAttr = imgEl.Attribute("scale");
                     if (scaleAttr != null)
-                        double.TryParse(scaleAttr.Value, out imageScale);
+                        double.TryParse(scaleAttr.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out imageScale);
                     return true;
                 }
                 catch (Exception ex)
