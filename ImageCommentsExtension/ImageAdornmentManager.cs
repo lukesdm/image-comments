@@ -76,8 +76,10 @@ namespace LM.ImageComments.EditorComponent
                 return;
 
             _errorTags.Clear();
-
-            TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length))));
+            if (TagsChanged != null)
+            {
+                TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length))));
+            }
 
             foreach (ITextViewLine line in _view.TextViewLines) // TODO [?]: implement more sensible handling of removing error tags, then use e.NewOrReformattedLines
             {

@@ -1,17 +1,19 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F0DF01A-F177-4AD2-A7C2-E71A530C2DD3}"
+	ProjectSection(SolutionItems) = preProject
+		License.txt = License.txt
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCommentsEditorComponent", "ImageCommentsExtension\ImageCommentsEditorComponent.csproj", "{715F244C-3EC6-453A-AC90-08052478A3BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCommentsPackage", "ImageCommentsPackage\ImageCommentsPackage.csproj", "{4CC0EE9F-8A7C-4653-9A55-B2F9BB3DDCE2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{715F244C-3EC6-453A-AC90-08052478A3BF} = {715F244C-3EC6-453A-AC90-08052478A3BF}
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F0DF01A-F177-4AD2-A7C2-E71A530C2DD3}"
-	ProjectSection(SolutionItems) = preProject
-		License.txt = License.txt
-		Readme.md = Readme.md
 	EndProjectSection
 EndProject
 Global

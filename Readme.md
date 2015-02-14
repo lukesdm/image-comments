@@ -10,7 +10,7 @@ This is an extension for the Visual Studio code editor that allows images to be 
 ### Preamble
 Disclaimer: This project is a WIP and it's pretty rough around the edges. Please report issues on the GitHub repo.
 
-Requires: Visual Studio 2010/2012 Standard, Premium etc.  
+Requires: Visual Studio 2013 (Community/Professional or better)
 
 ### Download/Installation
 [Download](http://github.com/lukesdm/image-comments/raw/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
@@ -55,10 +55,10 @@ In VS, open the Extension Manager, select ImageComments, then click uninstall. A
 * You need to scroll/'bump' the editor window to see the effect of the on/off toggle command.
 
 ## Development Info
-Requires: Visual Studio 2010 SP1 SDK
+Requires: Visual Studio 2013 SDK
 
 ### Build instructions
-Providing VS2010 SP1 SDK is installed, you should be able to build by opening the solution and hitting F6, and start debugging with the VS Experimental Instance with F5. The 'Release' build configuration copies the .vsix package into the Solution's .\Output directory.
+Providing the VS SDK is installed, you should be able to build by opening the solution and hitting F6. Debugging has to be configured manually - On the Project Properties->Debug tab, choose 'Start External Program' and command line e.g. (if using default install location) 'C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe' with arguments '/rootsuffix Exp'. The 'Release' build configuration copies the .vsix package into the Solution's .\Output directory.
 
 ### Program structure
 It's a very small project and may be fairly self explanatory if you are familiar with Visual Studio editor extensions.
