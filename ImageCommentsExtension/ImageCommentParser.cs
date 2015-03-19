@@ -8,16 +8,21 @@
     // TODO [?]: Could make this a non-static class and use instances, but ensure a new instance is created when content type of a view is changed.
     internal static class ImageCommentParser
     {
+
+
         // Initalise regex objects
         static ImageCommentParser()
         {
-            string xmlImageTagPattern = @"<image.*>";
+            const string xmlImageTagPattern = @"<image.*>";
             
-            string cSharpCommentPattern = @"///.*";
+            const string cSharpCommentPattern = @"///.*";
             _csharpImageCommentRegex = new Regex(cSharpCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
-            string vbCommentPattern = @"'.*";
+            const string vbCommentPattern = @"'.*";
             _vbImageCommentRegex = new Regex(vbCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
+
+            const string pythonCommentPattern = @":";
+            _pythonImageCommentRegex = new Regex(pythonCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
             _xmlImageTagRegex = new Regex(xmlImageTagPattern, RegexOptions.Compiled);
         }
@@ -28,7 +33,7 @@
         /// <returns>Position in line at start of matched image comment. -1 if not matched</returns>
         public static int Match(string contentTypeName, string lineText, out string matchedText)
         {
-            Match match = null;
+            Match match;
             switch (contentTypeName)
             {
                 case "C/C++":
@@ -37,6 +42,9 @@
                     break;
                 case "Basic":
                     match = _vbImageCommentRegex.Match(lineText);
+                    break;
+                case "Python":
+                    match = _pythonImageCommentRegex.Match(lineText);
                     break;
                 //TODO: Add support for more languages
                 default:
@@ -101,6 +109,7 @@
 
         private static Regex _csharpImageCommentRegex;
         private static Regex _vbImageCommentRegex;
+        private static Regex _pythonImageCommentRegex;
         private static Regex _xmlImageTagRegex;
     }
 }
