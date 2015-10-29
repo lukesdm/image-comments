@@ -27,6 +27,7 @@ namespace LM.ImageComments
 
         private const string PROJECTDIR_PATTERN = "$(ProjectDir)";
         private const string SOLUTIONDIR_PATTERN = "$(SolutionDir)";
+        private const string ITEMDIR_PATTERN = "$(ItemDir)";
 
         private string _projectDirectory;
         private string _solutionDirectory;
@@ -78,6 +79,13 @@ namespace LM.ImageComments
             else if (string.Compare(variableName, SOLUTIONDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 return _solutionDirectory;
+            }
+            else if (string.Compare(variableName, ITEMDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                ITextDocument document;
+                _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof(ITextDocument), out document);
+
+                return Path.GetDirectoryName(document.FilePath);
             }
             else
             {
