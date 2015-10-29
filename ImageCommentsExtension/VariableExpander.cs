@@ -83,9 +83,16 @@ namespace LM.ImageComments
             else if (string.Compare(variableName, ITEMDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 ITextDocument document;
-                _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof(ITextDocument), out document);
-
+                if (_view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out document))
+                {
                 return Path.GetDirectoryName(document.FilePath);
+                }
+                else
+                {
+                    return variableName;
+                }
+                //var dte2 = (DTE2)Package.GetGlobalService(typeof(SDTE));
+                //ProjectItem projectItem = dte2.Solution.FindProjectItem(document.FilePath);
             }
             else
             {
@@ -111,20 +118,17 @@ namespace LM.ImageComments
             _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out document);
             var dte2 = (DTE2)Package.GetGlobalService(typeof (SDTE));
             ProjectItem projectItem = dte2.Solution.FindProjectItem(document.FilePath);
-            
-            if (projectItem != null && projectItem.ContainingProject != null)
+                
+            string projectPath = projectItem.ContainingProject.FileName;
+            if (projectPath != "") // projectPath will be empty if file isn't part of a project.
             {
-                string projectPath = projectItem.ContainingProject.FileName;
-                if (projectPath != "") // projectPath will be empty if file isn't part of a project.
-                {
-                    _projectDirectory = Path.GetDirectoryName(projectPath) + @"\";
-                }
+                _projectDirectory = Path.GetDirectoryName(projectPath) + @"\";
+            }
 
-                string solutionPath = dte2.Solution.FileName;
-                if (solutionPath != "") // solutionPath will be empty if project isn't part of a saved solution
-                {
-                    _solutionDirectory = Path.GetDirectoryName(solutionPath) + @"\";
-                }
+            string solutionPath = dte2.Solution.FileName;
+            if (solutionPath != "") // solutionPath will be empty if project isn't part of a saved solution
+            {
+                _solutionDirectory = Path.GetDirectoryName(solutionPath) + @"\";
             }
         }
     }
