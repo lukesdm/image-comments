@@ -10,10 +10,12 @@ This is an extension for the Visual Studio code editor that allows images to be 
 ### Preamble
 Disclaimer: This project is a WIP and it's pretty rough around the edges. Please report issues on the GitHub repo.
 
-Requires: Visual Studio 2013 (Community/Professional or better)
+Requires: Visual Studio 2010/2012 or Visual Studio 2013 (Community/Professional or better)
 
 ### Download/Installation
-[Download](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
+[Download VS13/14/15](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
+[Download VS10/12](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.VS10.vsix), then double-click/activate the VSIX file in Explorer.
+
 ### How to use
 Image-comments are declared with:
 
