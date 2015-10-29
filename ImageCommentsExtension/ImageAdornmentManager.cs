@@ -14,7 +14,7 @@ namespace LM.ImageComments.EditorComponent
     /// <summary>
     /// Important class. Handles creation of image adornments on appropriate lines and associated error tags.
     /// </summary>
-    internal class ImageAdornmentManager : ITagger<ErrorTag>
+    internal class ImageAdornmentManager : ITagger<ErrorTag>, IDisposable
     {
         /// <summary>
         /// Initializes static members of the <see cref="ImageAdornmentManager"/> class
@@ -53,29 +53,33 @@ namespace LM.ImageComments.EditorComponent
             _view = view;
             _layer = view.GetAdornmentLayer("ImageCommentLayer");
             Images = new Dictionary<int, MyImage>();
-            _view.LayoutChanged += OnLayoutChanged;
+            _view.LayoutChanged += layoutChangedHandler;
 
             _contentTypeName = view.TextBuffer.ContentType.TypeName;
-            _view.TextBuffer.ContentTypeChanged += (sender, e) =>
-                {
-                    _contentTypeName = e.AfterContentType.TypeName;
-                };
+            _view.TextBuffer.ContentTypeChanged += contentTypeChangedHandler;
 
             _errorTags = new List<ITagSpan<ErrorTag>>();
             _variableExpander = new VariableExpander(_view);
         }
 
+        private void contentTypeChangedHandler(object sender, ContentTypeChangedEventArgs e)
+        {
+            _contentTypeName = e.AfterContentType.TypeName;
+        }
+
         /// <summary>
         /// On layout change add the adornment to any reformatted lines
         /// </summary>
-        private void OnLayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
+        private void layoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
         {
             if (!ImageAdornmentManager.Enabled)
                 return;
 
             _errorTags.Clear();
-
-            TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length))));
+            if (TagsChanged != null)
+            {
+                TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length))));
+            }
 
             foreach (ITextViewLine line in _view.TextViewLines) // TODO [?]: implement more sensible handling of removing error tags, then use e.NewOrReformattedLines
             {
@@ -83,7 +87,7 @@ namespace LM.ImageComments.EditorComponent
                 //TODO [?]: Limit rate of calls to the below when user is editing a line
                 try
                 {
-                    this.CreateVisuals(line, lineNumber);
+                    this.createVisuals(line, lineNumber);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -110,7 +114,7 @@ namespace LM.ImageComments.EditorComponent
         /// <summary>
         /// Scans text line for matching image comment signature, then adds new or updates existing image adornment
         /// </summary>
-        private void CreateVisuals(ITextViewLine line, int lineNumber)
+        private void createVisuals(ITextViewLine line, int lineNumber)
         {
 #pragma warning disable 219
             bool imageDetected = false; // useful for tracing
@@ -218,10 +222,16 @@ namespace LM.ImageComments.EditorComponent
             if (exception is XmlException)
                 message = "Problem with comment format: " + exception.Message;
             else if (exception is NotSupportedException)
-                message = exception.Message + "\nThis problem could be caused by corrupt, invalid or unsupported image file.";
+                message = exception.Message + "\nThis problem could be caused by a corrupt, invalid or unsupported image file.";
             else
                 message = exception.Message;
             return message;
+        }
+
+        private void unsubscribeFromViewerEvents()
+        {
+            _view.LayoutChanged -= layoutChangedHandler;
+            _view.TextBuffer.ContentTypeChanged -= contentTypeChangedHandler;
         }
 
         #region ITagger<ErrorTag> Members
@@ -232,6 +242,21 @@ namespace LM.ImageComments.EditorComponent
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+
+        #endregion
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// This is called by the TextView when closing. Events are unsubscribed here.
+        /// </summary>
+        /// <remarks>
+        /// It's actually called twice - once by the IPropertyOwner instance, and again by the ITagger instance
+        /// </remarks>
+        public void Dispose()
+        {
+            unsubscribeFromViewerEvents();
+        }
 
         #endregion
     }
