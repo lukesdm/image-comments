@@ -13,7 +13,7 @@ Disclaimer: This project is a WIP and it's pretty rough around the edges. Please
 Requires: Visual Studio 2013 (Community/Professional or better)
 
 ### Download/Installation
-[Download](https://github.com/janmolnar/image-comments/blob/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
+[Download](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
 ### How to use
 Image-comments are declared with:
 
