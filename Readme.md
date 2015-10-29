@@ -27,7 +27,7 @@ Image-comments are declared with:
 The `scale` attribute multiplies the source width and height by Y and is optional.
 
 
-You can use the VS environment variables $(ProjectDir) and $(SolutionDir) in URLs, e.g.:
+You can use the VS environment variables $(ProjectDir), $(SolutionDir), and $(ItemDir) in URLs, e.g.:
 
 `/// <image <url="$(SolutionDir)\CommonImages\Fourier.jpg`
 
