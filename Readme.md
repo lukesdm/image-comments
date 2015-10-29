@@ -13,9 +13,9 @@ Disclaimer: This project is a WIP and it's pretty rough around the edges. Please
 Requires: Visual Studio 2013 (Community/Professional or better)
 
 ### Download/Installation
-[Download](http://github.com/lukesdm/image-comments/raw/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
+[Download](https://github.com/janmolnar/image-comments/blob/master/Output/ImageComments.vsix), then double-click/activate the VSIX file in Explorer.
 ### How to use
-Image-comments are declared with: 
+Image-comments are declared with:
 
 `/// <image url="X:\Path\To\Image.ext" scale="Y" />`
 
@@ -64,7 +64,7 @@ Providing the VS SDK is installed, you should be able to build by opening the so
 It's a very small project and may be fairly self explanatory if you are familiar with Visual Studio editor extensions.
 There are two components to the extension:
 
-* ImageCommentsEditorComponent. Contains 97% of the functionality. 
+* ImageCommentsEditorComponent. Contains 97% of the functionality.
 * ImageCommentsPackage. Adds a command to enable/disable functionality; VSIX definition.
 
 For testing information, see .\Testing\Testing.html
