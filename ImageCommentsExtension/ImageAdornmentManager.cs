@@ -14,7 +14,7 @@ namespace LM.ImageComments.EditorComponent
     /// <summary>
     /// Important class. Handles creation of image adornments on appropriate lines and associated error tags.
     /// </summary>
-    internal class ImageAdornmentManager : ITagger<ErrorTag>, IDisposable
+    public class ImageAdornmentManager : ITagger<ErrorTag>, IDisposable
     {
         /// <summary>
         /// Initializes static members of the <see cref="ImageAdornmentManager"/> class
@@ -38,7 +38,7 @@ namespace LM.ImageComments.EditorComponent
         public static bool Enabled { get; set; }
         
         // Dictionary to map line number to image
-        public Dictionary<int, MyImage> Images { get; set; }
+        internal Dictionary<int, MyImage> Images { get; set; }
 
         private IAdornmentLayer _layer;
         private IWpfTextView _view;

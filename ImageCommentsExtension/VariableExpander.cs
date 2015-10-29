@@ -19,6 +19,7 @@ namespace LM.ImageComments
     /// Currently supported variables are:
     ///   $(ProjectDir)
     ///   $(SolutionDir)
+    ///   $(ItemDir)
     /// </summary>
     class VariableExpander
     {
@@ -83,9 +84,12 @@ namespace LM.ImageComments
             else if (string.Compare(variableName, ITEMDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 ITextDocument document;
-                _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof(ITextDocument), out document);
+                if (_view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof(ITextDocument), out document))
+                {
+                    return Path.GetDirectoryName(document.FilePath);
+                }
 
-                return Path.GetDirectoryName(document.FilePath);
+                return variableName;
             }
             else
             {
