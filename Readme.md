@@ -14,6 +14,7 @@ Requires: Visual Studio 2010/2012 or Visual Studio 2013 (Community/Professional 
 
 ### Download/Installation
 [Download VS13/14/15](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.vsix)
+
 [Download VS10/12](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.VS10.vsix)
 
 To install double-click/activate the VSIX file.
