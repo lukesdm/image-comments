@@ -2,19 +2,19 @@
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
-  <Extern href="stdidcmd.h"/>
+  <Extern href="stdidcmd.h" />
 
   <!--This header contains the command ids for the menus provided by the shell. -->
-  <Extern href="vsshlids.h"/>
+  <Extern href="vsshlids.h" />
 
   <!--Definition of some VSCT specific constants. In this sample we use it for the IDs inside the guidOfficeIcon group. -->
-  <Extern href="msobtnid.h"/>
+  <!--<Extern href="msobtnid.h" xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" />-->
 
   <Commands package="guidImageCommentsPackagePkg">
     <Groups>
       <!--TODO [?]: Put the command somewhere appropriate -->
       <Group guid="guidImageCommentsPackageCmdSet" id="ImageCommentsGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
       </Group>
     </Groups>
     
@@ -32,7 +32,7 @@
 
   <!--TODO [?]: Set editor to something more specific -->
   <KeyBindings>
-    <KeyBinding guid="guidImageCommentsPackageCmdSet" id="cmdidToggleImageComments" editor="guidVSStd97" key1="M" mod1="Control Shift"/>
+    <KeyBinding guid="guidImageCommentsPackageCmdSet" id="cmdidToggleImageComments" editor="guidVSStd97" key1="M" mod1="Control Shift" />
   </KeyBindings>
 
   <Symbols>
