@@ -83,7 +83,7 @@
                     imageUrl = srcAttr.Value;
                     XAttribute scaleAttr = imgEl.Attribute("scale");
                     if (scaleAttr != null)
-                        double.TryParse(scaleAttr.Value, out imageScale);
+                        double.TryParse(scaleAttr.Value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out imageScale);
                     return true;
                 }
                 catch (Exception ex)
