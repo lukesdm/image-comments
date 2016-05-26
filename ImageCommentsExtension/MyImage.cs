@@ -76,11 +76,25 @@ namespace LM.ImageComments.EditorComponent
                     // Create file system watcher to update changed image file.
                     _watcher = new FileSystemWatcher
                     {
-                        NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size,
+                        //NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size,
                         Path = Path.GetDirectoryName(expandedUrl),
                         Filter = Path.GetFileName(expandedUrl)
                     };
-                    FileSystemEventHandler refresh = delegate { Url = null; refreshAction(); };
+                    var w = _watcher;
+                    FileSystemEventHandler refresh = delegate
+                    {
+                        try
+                        {
+                            var enableRaisingEvents = w.EnableRaisingEvents;
+                            w.EnableRaisingEvents = false;
+                            if (enableRaisingEvents)
+                            {
+                                Url = null;
+                                refreshAction();
+                            }
+                        }
+                        catch { }
+                    };
                     _watcher.Changed += refresh;
                     _watcher.Renamed += (s, a) => refresh(s, a);
                     _watcher.Deleted += refresh;
