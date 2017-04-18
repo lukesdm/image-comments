@@ -4,20 +4,34 @@ namespace LM.ImageComments.EditorComponent
 {
     using System;
     using System.Text.RegularExpressions;
+    using System.Windows.Media;
     using System.Xml;
     using System.Xml.Linq;
 
     // TODO [?]: Could make this a non-static class and use instances, but ensure a new instance is created when content type of a view is changed.
     internal static class ImageCommentParser
     {
-        // Initalise regex objects
+
+        private static Regex _csharpImageCommentRegex;
+        private static Regex _csharpIndentRegex;
+        private static Regex _vbImageCommentRegex;
+        private static Regex _vbIndentRegex;
+        private static Regex _xmlImageTagRegex;
+
+        // Initialize regex objects
         static ImageCommentParser()
         {
             string xmlImageTagPattern = @"<image.*>";
-            
-            string cSharpCommentPattern = @"///.*";
+
+            // C/C++/C#
+            string cSharpIndent = @"[^\s\/]";
+            _csharpIndentRegex = new Regex(cSharpIndent, RegexOptions.Compiled);
+            string cSharpCommentPattern = @"//.*";
             _csharpImageCommentRegex = new Regex(cSharpCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
+            // VB
+            string vbIndent = @"[^\s\']";
+            _vbIndentRegex = new Regex(vbIndent, RegexOptions.Compiled);
             string vbCommentPattern = @"'.*";
             _vbImageCommentRegex = new Regex(vbCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
@@ -52,7 +66,16 @@ namespace LM.ImageComments.EditorComponent
                 return -1;
             else
             {
-                return match.Index;
+                  switch (contentTypeName)
+                {
+                    case "C/C++":
+                    case "CSharp":
+                        return match.Index + _csharpIndentRegex.Match(lineText).Index;
+                    case "Basic":
+                        return match.Index + _vbIndentRegex.Match(lineText).Index;
+                    default:
+                        return match.Index;
+                }
             }
         }
         /// <summary>
@@ -63,7 +86,7 @@ namespace LM.ImageComments.EditorComponent
         /// <param name="imageScale">Output: Scale factor of image </param>
         /// <param name="ex">Instance of any exception generated. Null if function finished succesfully</param>
         /// <returns>Returns true if successful, otherwise false</returns>
-        public static bool TryParse(string matchedText, out string imageUrl, out double imageScale, out Exception exception)
+        public static bool TryParse(string matchedText, out string imageUrl, out double imageScale, ref Color bgColor, out Exception exception)
         {
             exception = null;
             imageUrl = "";
@@ -85,10 +108,28 @@ namespace LM.ImageComments.EditorComponent
                     imageUrl = srcAttr.Value;
                     XAttribute scaleAttr = imgEl.Attribute("scale");
                     if (scaleAttr != null)
+                    {
                         double.TryParse(scaleAttr.Value
                             .Replace(".", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator)
                             .Replace(",", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator), out imageScale);
+                    }
 
+                    XAttribute bgColorAttr = imgEl.Attribute("bgcolor");
+                    if (bgColorAttr != null)
+                    {
+                        UInt32 color;
+                        if( UInt32.TryParse(bgColorAttr.Value.Replace("#", "").Replace("0x", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out color) )
+                        {
+                            bgColor.A = 255;
+                            bgColor.B = (byte)color;
+                            bgColor.G = (byte)(color>>8);
+                            bgColor.R = (byte)(color>>16);
+                        }
+                    }
+                    else
+                    {
+                        bgColor.A = 0;
+                    }
                     return true;
                 }
                 catch (Exception ex)
@@ -103,9 +144,5 @@ namespace LM.ImageComments.EditorComponent
                 return false;
             }
         }
-
-        private static Regex _csharpImageCommentRegex;
-        private static Regex _vbImageCommentRegex;
-        private static Regex _xmlImageTagRegex;
     }
 }

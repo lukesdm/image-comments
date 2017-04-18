@@ -123,6 +123,7 @@ namespace LM.ImageComments.EditorComponent
             string lineText = line.Extent.GetText();
             string imageUrl;
             double scale;
+            Color bgColor = new Color();
             string matchedText;
             int matchIndex = ImageCommentParser.Match(_contentTypeName, lineText, out matchedText);
             if (matchIndex >= 0)
@@ -133,7 +134,7 @@ namespace LM.ImageComments.EditorComponent
                 var span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
 
                 Exception xmlParseException;
-                ImageCommentParser.TryParse(matchedText, out imageUrl, out scale, out xmlParseException);
+                ImageCommentParser.TryParse(matchedText, out imageUrl, out scale, ref bgColor, out xmlParseException);
 
                 if (xmlParseException != null)
                 {
@@ -160,15 +161,15 @@ namespace LM.ImageComments.EditorComponent
                     {
                         existingImage.Scale = scale;
                     }
-                    else if (existingImage.Url != imageUrl) // URL different, so set new source
+                    else if (existingImage.Url != imageUrl || existingImage.BgColor!= bgColor) // URL different, so set new source
                     {
-                        existingImage.TrySet(imageUrl, scale, out imageLoadingException, () => createVisuals(line, lineNumber));
+                        existingImage.TrySet(imageUrl, scale, bgColor, out imageLoadingException, () => createVisuals(line, lineNumber));
                     }
                 }
                 else // No existing image, so create new one
                 {
                     image = new MyImage(_variableExpander);
-                    image.TrySet(imageUrl, scale, out imageLoadingException, () => createVisuals(line, lineNumber));
+                    image.TrySet(imageUrl, scale, bgColor, out imageLoadingException, () => createVisuals(line, lineNumber));
                     Images.Add(lineNumber, image);
                 }
 

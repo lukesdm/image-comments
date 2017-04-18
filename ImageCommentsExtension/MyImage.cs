@@ -5,6 +5,7 @@ namespace LM.ImageComments.EditorComponent
 {
     using System;
     using System.Windows.Controls;
+    using System.Windows.Media;
     using System.Windows.Media.Imaging;
 
     /// <summary>
@@ -24,7 +25,9 @@ namespace LM.ImageComments.EditorComponent
         }
         
         public string Url { get; private set; }
-        
+
+        public Color BgColor { get; private set; }
+
         /// <summary>
         /// Scale image if value is greater than 0, otherwise use source dimensions
         /// </summary>
@@ -57,8 +60,8 @@ namespace LM.ImageComments.EditorComponent
         /// </summary>
         /// <param name="scale">If > 0, scales the image by the specified amount, otherwise uses source image dimensions</param>
         /// <param name="exception">Is set to the Exception instance if image couldn't be loaded, otherwise null</param>
-        /// <returns>Returns true if image was succesfully loaded, otherwise false</returns>
-        public bool TrySet(string imageUrl, double scale, out Exception exception, Action refreshAction)
+        /// <returns>Returns true if image was successfully loaded, otherwise false</returns>
+        public bool TrySet(string imageUrl, double scale, Color bgColor, out Exception exception, Action refreshAction)
         {
             // Remove old watcher.
             var watcher = _watcher;
@@ -104,8 +107,15 @@ namespace LM.ImageComments.EditorComponent
                 {
                     //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
                     //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
-                    this.Source = BitmapFrame.Create(new Uri(expandedUrl, UriKind.Absolute));
+                    Source = BitmapFrame.Create(new Uri(expandedUrl, UriKind.Absolute));
                 }
+
+                if (bgColor.A != 0)
+                {
+                    Source = ReplaceTransparency(Source, bgColor);
+                    BgColor = bgColor;
+                }
+
                 Url = imageUrl;
             }
             catch (Exception ex)
@@ -120,6 +130,21 @@ namespace LM.ImageComments.EditorComponent
         public override string ToString()
         {
             return Url;
+        }
+
+        private static BitmapFrame ReplaceTransparency(ImageSource bitmap, Color color)
+        {
+            var rect = new Rect(0, 0, (int)bitmap.Width, (int)bitmap.Height);
+            var visual = new DrawingVisual();
+            var context = visual.RenderOpen();
+            context.DrawRectangle(new SolidColorBrush(color), null, rect);
+            context.DrawImage(bitmap, rect);
+            context.Close();
+
+            var render = new RenderTargetBitmap((int)bitmap.Width, (int)bitmap.Height,
+                96, 96, PixelFormats.Pbgra32);
+            render.Render(visual);
+            return BitmapFrame.Create(render);
         }
 
         private  double _scale;
