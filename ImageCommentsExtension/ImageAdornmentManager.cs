@@ -162,13 +162,13 @@ namespace LM.ImageComments.EditorComponent
                     }
                     else if (existingImage.Url != imageUrl) // URL different, so set new source
                     {
-                        existingImage.TrySet(imageUrl, scale, out imageLoadingException);
+                        existingImage.TrySet(imageUrl, scale, out imageLoadingException, () => createVisuals(line, lineNumber));
                     }
                 }
                 else // No existing image, so create new one
                 {
                     image = new MyImage(_variableExpander);
-                    image.TrySet(imageUrl, scale, out imageLoadingException);
+                    image.TrySet(imageUrl, scale, out imageLoadingException, () => createVisuals(line, lineNumber));
                     Images.Add(lineNumber, image);
                 }
 
