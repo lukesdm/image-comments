@@ -1,5 +1,7 @@
 # ImageComments (a Visual Studio Extension)
 
+This fork is an updated version with all sound patches from the different forks out there.
+
 ## Overview
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
 
@@ -86,3 +88,6 @@ The code is a bit rough - it may not need a rewrite from scratch, but there's a 
 
 ## License
 Eclipse Public License v1.0. See [license text](http://github.com/lukesdm/image-comments/raw/master/License.txt) for details.
+
+## Author
+The original plugin was made by Luke McQuade, this fork is maintained by Thomas Pollak. Further contributors: Lionsoft, Oleg Kosmakov, Morten Engelhardt Olsen, Wolfgang Kleinschmit

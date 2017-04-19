@@ -3,6 +3,7 @@
 namespace LM.ImageComments.EditorComponent
 {
     using System;
+    using System.Globalization;
     using System.Text.RegularExpressions;
     using System.Windows.Media;
     using System.Xml;
@@ -114,9 +115,7 @@ namespace LM.ImageComments.EditorComponent
                     XAttribute scaleAttr = imgEl.Attribute("scale");
                     if (scaleAttr != null)
                     {
-                        double.TryParse(scaleAttr.Value
-                            .Replace(".", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator)
-                            .Replace(",", NumberFormatInfo.CurrentInfo.NumberDecimalSeparator), out imageScale);
+                        double.TryParse(scaleAttr.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out imageScale);
                     }
 
                     XAttribute bgColorAttr = imgEl.Attribute("bgcolor");
