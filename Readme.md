@@ -91,4 +91,4 @@ The code is a bit rough - it may not need a rewrite from scratch, but there's a 
 Eclipse Public License v1.0. See [license text](http://github.com/lukesdm/image-comments/raw/master/License.txt) for details.
 
 ## Author
-The original plugin was made by Luke McQuade, this fork is maintained by Thomas Pollak. Further contributors: Lionsoft, Oleg Kosmakov, Morten Engelhardt Olsen, Wolfgang Kleinschmit
+The original plugin was made by Luke McQuade, this fork is maintained by Thomas Pollak. Further contributors: Lionsoft, Oleg Kosmakov, Morten Engelhardt Olsen, Wolfgang Kleinschmit, Sören Nils Kuklau
