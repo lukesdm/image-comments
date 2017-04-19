@@ -16,6 +16,19 @@ namespace LM.ImageComments.EditorComponent
     /// </summary>
     public class ImageAdornmentManager : ITagger<ErrorTag>, IDisposable
     {
+        private readonly IAdornmentLayer _layer;
+        private readonly IWpfTextView _view;
+        private readonly VariableExpander _variableExpander;
+        private string _contentTypeName;
+        private bool _initialised1;
+        private bool _initialised2;
+        private readonly List<ITagSpan<ErrorTag>> _errorTags;
+
+        public static bool Enabled { get; set; }
+
+        // Dictionary to map line number to image
+        internal Dictionary<int, MyImage> Images { get; set; }
+
         /// <summary>
         /// Initializes static members of the <see cref="ImageAdornmentManager"/> class
         /// </summary>
@@ -35,25 +48,12 @@ namespace LM.ImageComments.EditorComponent
             UIMessage.Show(message);
         }
 
-        public static bool Enabled { get; set; }
-        
-        // Dictionary to map line number to image
-        internal Dictionary<int, MyImage> Images { get; set; }
-
-        private IAdornmentLayer _layer;
-        private IWpfTextView _view;
-        private VariableExpander _variableExpander;
-        private string _contentTypeName;
-        private bool _initialised1 = false;
-        private bool _initialised2 = false;
-        private List<ITagSpan<ErrorTag>> _errorTags;
-        
         public ImageAdornmentManager(IWpfTextView view)
         {
             _view = view;
             _layer = view.GetAdornmentLayer("ImageCommentLayer");
             Images = new Dictionary<int, MyImage>();
-            _view.LayoutChanged += layoutChangedHandler;
+            _view.LayoutChanged += LayoutChangedHandler;
 
             _contentTypeName = view.TextBuffer.ContentType.TypeName;
             _view.TextBuffer.ContentTypeChanged += contentTypeChangedHandler;
@@ -70,9 +70,9 @@ namespace LM.ImageComments.EditorComponent
         /// <summary>
         /// On layout change add the adornment to any reformatted lines
         /// </summary>
-        private void layoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
+        private void LayoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
         {
-            if (!ImageAdornmentManager.Enabled)
+            if (!Enabled)
                 return;
 
             _errorTags.Clear();
@@ -87,7 +87,7 @@ namespace LM.ImageComments.EditorComponent
                 //TODO [?]: Limit rate of calls to the below when user is editing a line
                 try
                 {
-                    this.createVisuals(line, lineNumber);
+                    CreateVisuals(line, lineNumber);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -114,16 +114,13 @@ namespace LM.ImageComments.EditorComponent
         /// <summary>
         /// Scans text line for matching image comment signature, then adds new or updates existing image adornment
         /// </summary>
-        private void createVisuals(ITextViewLine line, int lineNumber)
+        private void CreateVisuals(ITextViewLine line, int lineNumber)
         {
 #pragma warning disable 219
             bool imageDetected = false; // useful for tracing
 #pragma warning restore 219
 
             string lineText = line.Extent.GetText();
-            string imageUrl;
-            double scale;
-            Color bgColor = new Color();
             string matchedText;
             int matchIndex = ImageCommentParser.Match(_contentTypeName, lineText, out matchedText);
             if (matchIndex >= 0)
@@ -134,6 +131,9 @@ namespace LM.ImageComments.EditorComponent
                 var span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
 
                 Exception xmlParseException;
+                string imageUrl;
+                double scale;
+				Color bgColor = new Color();
                 ImageCommentParser.TryParse(matchedText, out imageUrl, out scale, ref bgColor, out xmlParseException);
 
                 if (xmlParseException != null)
@@ -144,12 +144,12 @@ namespace LM.ImageComments.EditorComponent
                         Images.Remove(lineNumber);
                     }
 
-                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("XML parse error", getErrorMessage(xmlParseException))));
+                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("XML parse error", GetErrorMessage(xmlParseException))));
 
                     return;
                 }
 
-                MyImage image = null;
+                MyImage image;
                 Exception imageLoadingException = null;
                 
                 // Check for and update existing image
@@ -157,19 +157,18 @@ namespace LM.ImageComments.EditorComponent
                 if (existingImage != null)
                 {
                     image = existingImage;
-                    if (existingImage.Url == imageUrl && existingImage.Scale != scale) // URL same but scale changed
+                    if (existingImage.Url != imageUrl || existingImage.BgColor!= bgColor) // URL different, so set new source
+                    {
+                        existingImage.TrySet(imageUrl, scale, bgColor, out imageLoadingException, () => CreateVisuals(line, lineNumber));
+                    } else if (existingImage.Url == imageUrl && Math.Abs(existingImage.Scale - scale) > 0.0001) // URL same but scale changed
                     {
                         existingImage.Scale = scale;
-                    }
-                    else if (existingImage.Url != imageUrl || existingImage.BgColor!= bgColor) // URL different, so set new source
-                    {
-                        existingImage.TrySet(imageUrl, scale, bgColor, out imageLoadingException, () => createVisuals(line, lineNumber));
                     }
                 }
                 else // No existing image, so create new one
                 {
                     image = new MyImage(_variableExpander);
-                    image.TrySet(imageUrl, scale, bgColor, out imageLoadingException, () => createVisuals(line, lineNumber));
+                    image.TrySet(imageUrl, scale, bgColor, out imageLoadingException, () => CreateVisuals(line, lineNumber));
                     Images.Add(lineNumber, image);
                 }
 
@@ -204,7 +203,7 @@ namespace LM.ImageComments.EditorComponent
                     if (Images.ContainsKey(lineNumber))
                         Images.Remove(lineNumber);
 
-                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("Trouble loading image", getErrorMessage(imageLoadingException))));
+                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("Trouble loading image", GetErrorMessage(imageLoadingException))));
                 }
                 imageDetected = true;
             }
@@ -215,7 +214,7 @@ namespace LM.ImageComments.EditorComponent
             }
         }
 
-        private string getErrorMessage(Exception exception)
+        private static string GetErrorMessage(Exception exception)
         {
             Trace.WriteLine("Problem parsing comment text or loading image...\n" + exception);
 
@@ -229,9 +228,9 @@ namespace LM.ImageComments.EditorComponent
             return message;
         }
 
-        private void unsubscribeFromViewerEvents()
+        private void UnsubscribeFromViewerEvents()
         {
-            _view.LayoutChanged -= layoutChangedHandler;
+            _view.LayoutChanged -= LayoutChangedHandler;
             _view.TextBuffer.ContentTypeChanged -= contentTypeChangedHandler;
         }
 
@@ -256,7 +255,7 @@ namespace LM.ImageComments.EditorComponent
         /// </remarks>
         public void Dispose()
         {
-            unsubscribeFromViewerEvents();
+            UnsubscribeFromViewerEvents();
         }
 
         #endregion

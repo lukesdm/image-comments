@@ -12,28 +12,37 @@ namespace LM.ImageComments.EditorComponent
     internal static class ImageCommentParser
     {
 
+
         private static Regex _csharpImageCommentRegex;
         private static Regex _csharpIndentRegex;
         private static Regex _vbImageCommentRegex;
         private static Regex _vbIndentRegex;
+		private static Regex _pythonImageCommentRegex;
+		private static Regex _pythonIndentRegex;
         private static Regex _xmlImageTagRegex;
 
         // Initialize regex objects
         static ImageCommentParser()
         {
-            string xmlImageTagPattern = @"<image.*>";
+            const string xmlImageTagPattern = @"<image.*>";
 
             // C/C++/C#
-            string cSharpIndent = @"[^\s\/]";
+            const string cSharpIndent = @"//\s+";
             _csharpIndentRegex = new Regex(cSharpIndent, RegexOptions.Compiled);
-            string cSharpCommentPattern = @"//.*";
+            const string cSharpCommentPattern = @"//.*";
             _csharpImageCommentRegex = new Regex(cSharpCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
             // VB
-            string vbIndent = @"[^\s\']";
+            const string vbIndent = @"'\s+";
             _vbIndentRegex = new Regex(vbIndent, RegexOptions.Compiled);
-            string vbCommentPattern = @"'.*";
+            const string vbCommentPattern = @"'.*";
             _vbImageCommentRegex = new Regex(vbCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
+
+            //Python
+			const string pythonIndent = @"#\s+";
+            _pythonIndentRegex = new Regex(pythonIndent, RegexOptions.Compiled);
+            const string pythonCommentPattern = @"#.*";
+            _pythonImageCommentRegex = new Regex(pythonCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
             _xmlImageTagRegex = new Regex(xmlImageTagPattern, RegexOptions.Compiled);
         }
@@ -44,39 +53,35 @@ namespace LM.ImageComments.EditorComponent
         /// <returns>Position in line at start of matched image comment. -1 if not matched</returns>
         public static int Match(string contentTypeName, string lineText, out string matchedText)
         {
-            Match match = null;
+            Match commentMatch;
+            Match indentMatch;
             switch (contentTypeName)
             {
                 case "C/C++":
                 case "CSharp":
-                    match = _csharpImageCommentRegex.Match(lineText);
+                    commentMatch = _csharpImageCommentRegex.Match(lineText);
+                    indentMatch = _csharpIndentRegex.Match(lineText);
                     break;
                 case "Basic":
-                    match = _vbImageCommentRegex.Match(lineText);
+                    commentMatch = _vbImageCommentRegex.Match(lineText);
+                    indentMatch = _vbIndentRegex.Match(lineText);
+                    break;
+                case "Python":
+                    commentMatch = _pythonImageCommentRegex.Match(lineText);
+                    indentMatch = _pythonIndentRegex.Match(lineText);
                     break;
                 //TODO: Add support for more languages
                 default:
-                    Console.WriteLine("Unsupported content type: " + contentTypeName);
+                    //Console.WriteLine("Unsupported content type: " + contentTypeName);
                     matchedText = "";
                     return -1;
             }
 
-            matchedText = match.Value;
+            matchedText = commentMatch.Value;
             if (matchedText == "")
                 return -1;
-            else
-            {
-                  switch (contentTypeName)
-                {
-                    case "C/C++":
-                    case "CSharp":
-                        return match.Index + _csharpIndentRegex.Match(lineText).Index;
-                    case "Basic":
-                        return match.Index + _vbIndentRegex.Match(lineText).Index;
-                    default:
-                        return match.Index;
-                }
-            }
+            
+            return indentMatch.Index + indentMatch.Length;
         }
         /// <summary>
         /// Looks for well formed image comment in line of text and tries to parse parameters

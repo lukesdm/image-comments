@@ -66,7 +66,8 @@ namespace LM.ImageComments.EditorComponent
             // Remove old watcher.
             var watcher = _watcher;
             _watcher = null;
-            watcher?.Dispose();
+            if(watcher!=null)
+                watcher.Dispose();
             // ---
             exception = null;
             try

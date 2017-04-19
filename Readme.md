@@ -10,12 +10,12 @@ This is an extension for the Visual Studio code editor that allows images to be 
 ### Preamble
 Disclaimer: This project is a WIP and it's pretty rough around the edges. Please report issues on the GitHub repo.
 
-Requires: Visual Studio 2010/2012 or Visual Studio 2013 (Community/Professional or better)
+Supported Visual Studio Verions 2010~2015 (2017 warns about missing support, but works)
 
 ### Download/Installation
-[Download VS13/14/15](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.vsix)
+[Download VS13/14/15](https://github.com/TomSmartBishop/image-comments/raw/master/Output/ImageComments.vsix)
 
-[Download VS10/12](https://github.com/janmolnar/image-comments/raw/master/Output/ImageComments.VS10.vsix)
+[Download VS10/12](https://github.com/TomSmartBishop/image-comments/raw/master/Output/ImageComments.VS10.vsix)
 
 To install double-click/activate the VSIX file.
 
@@ -26,10 +26,12 @@ Image-comments are declared with:
 
 The `scale` attribute multiplies the source width and height by Y and is optional.
 
+`// <image url="X:\Path\To\TransparentImage.png" bgcolor="ffffff" />`
+You can also specify the `bgcolor` attribute to set a background color for pictures with transparent areas, the color is specified as hex number: RRGGBB.
 
 You can use the VS environment variables $(ProjectDir), $(SolutionDir), and $(ItemDir) in URLs, e.g.:
 
-`/// <image <url="$(SolutionDir)\CommonImages\Fourier.jpg`
+`# <image url="$(SolutionDir)\CommonImages\Fourier.jpg" />` 
 
 
 Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-us/library/ms610982) with a [BitmapFrame](http://msdn.microsoft.com/en-us/library/ms619213) source, and accepted image and URL formats are tied to those, e.g. BMP, PNG, JPG all work as image formats, and C:\Path\To\Image.png, http://www.server.com/image.png and \\\server\folder\image.png all work as URLs.
@@ -41,7 +43,7 @@ If there's a problem trying to load the image or parse the tag, the tag will be 
 ![](http://lukesdm.github.com/image-comments/media/error-example-1.png)
 
 
-The languages currently supported are C#, C, C++ and VB. For VB though, replace the beginning `///` with `'''`.
+The languages currently supported are Python, C#, C, C++ and VB.
 
 
 Image-comments don't really have anything to do with XML comments, but the format is convenient and it should be pretty straight-forward to transform them for Sandcastle documentation creation.
@@ -60,7 +62,7 @@ In VS, open the Extension Manager, select ImageComments, then click uninstall. A
 * You need to scroll/'bump' the editor window to see the effect of the on/off toggle command.
 
 ## Development Info
-Requires: Visual Studio 2013 SDK
+Requires: Visual Studio 2015 SDK
 
 ### Build instructions
 Providing the VS SDK is installed, you should be able to build by opening the solution and hitting F6. Debugging has to be configured manually - On the Project Properties->Debug tab, choose 'Start External Program' and command line e.g. (if using default install location) 'C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe' with arguments '/rootsuffix Exp'. The 'Release' build configuration copies the .vsix package into the Solution's .\Output directory.
