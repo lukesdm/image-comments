@@ -142,6 +142,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataUriLoader.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="ErrorTaggerProvider.cs" />
     <Compile Include="MyImage.cs" />

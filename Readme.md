@@ -80,6 +80,7 @@ For testing information, see .\Testing\Testing.html
 ### Some known implementation issues
 The code is a bit rough - it may not need a rewrite from scratch, but there's a bunch of stuff to be done
 
+* Images downloaded from an URL might not show up right away
 * Error/exception handling should be improved
 * Program/project structure could be improved
 * No automated tests and manual testing has been limited.

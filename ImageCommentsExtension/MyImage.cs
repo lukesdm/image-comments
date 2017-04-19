@@ -13,9 +13,15 @@ namespace LM.ImageComments.EditorComponent
     /// </summary>
     internal class MyImage : Image
     {
+		private double _scale;
         private VariableExpander _variableExpander;
+        private FileSystemWatcher _watcher;
 
-        public MyImage(VariableExpander variableExpander) : base()
+        public string Url { get; private set; }
+        public Color BgColor { get; private set; }
+
+        public MyImage(VariableExpander variableExpander)
+            : base()
         {
             if (variableExpander == null)
             {
@@ -23,10 +29,6 @@ namespace LM.ImageComments.EditorComponent
             }
             _variableExpander = variableExpander;
         }
-        
-        public string Url { get; private set; }
-
-        public Color BgColor { get; private set; }
 
         /// <summary>
         /// Scale image if value is greater than 0, otherwise use source dimensions
@@ -52,8 +54,6 @@ namespace LM.ImageComments.EditorComponent
                 }
             }
         }
-
-        private FileSystemWatcher _watcher;
 
         /// <summary>
         /// Sets image source and size (by scale factor)
@@ -104,12 +104,17 @@ namespace LM.ImageComments.EditorComponent
                     _watcher.Deleted += refresh;
                     _watcher.EnableRaisingEvents = true;
                 }
-                else
-                {
-                    //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
-                    //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
-                    Source = BitmapFrame.Create(new Uri(expandedUrl, UriKind.Absolute));
-                }
+				else
+				{
+               		//TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
+					//  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
+					Uri uri = new Uri(_variableExpander.ProcessText(expandedUrl), UriKind.Absolute);
+
+					if (uri.Scheme == "data")
+						Source = BitmapFrame.Create(DataUriLoader.Load(uri));
+					else
+						Source = BitmapFrame.Create(uri);
+				}
 
                 if (bgColor.A != 0)
                 {
@@ -147,7 +152,5 @@ namespace LM.ImageComments.EditorComponent
             render.Render(visual);
             return BitmapFrame.Create(render);
         }
-
-        private  double _scale;
     }
 }
