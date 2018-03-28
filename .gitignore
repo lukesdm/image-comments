@@ -115,7 +115,7 @@ Backup*/
 UpgradeLog*.XML
 
 # VS2017 Local settings
-/.vs
+**/.vs
 
 ############
 ## Windows
@@ -164,4 +164,5 @@ pip-log.txt
 .DS_Store
 *.orig
 
-
+# Nuget packages
+/packages
