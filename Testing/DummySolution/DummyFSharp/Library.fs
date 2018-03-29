@@ -1,10 +1,10 @@
 namespace DummyFSharp
 
 module Say =
-    /// <image url="$(ProjectDir)\CommentPics\Koala.jpg" scale="0.2" />
-    /// Image author: David Iliff
-    /// License: http://en.wikipedia.org/wiki/File:Koala_climbing_tree.jpg#Summary
-    let Koala () =
+    /// <summary>
+    /// Recreate signal given Fourier components
+    /// <image url="$(SolutionDir)\CommonImages\fourier.png" />
+    let ReconstituteSignal () =
         ()
 
     /// <summary>
