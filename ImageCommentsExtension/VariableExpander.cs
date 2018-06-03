@@ -37,6 +37,8 @@ namespace LM.ImageComments
 
         public VariableExpander(IWpfTextView view)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (view == null)
             {
                  throw new ArgumentNullException("view");

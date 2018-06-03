@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{9A45B4D8-B3B5-4EA6-A444-E9476636A84A}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\paket.dependencies = ..\..\paket.dependencies
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dummy", "DummyMain\Dummy.csproj", "{5C00E040-8CA0-4FD6-8EE7-8A4E7DE69D96}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DummyC", "DummyC\DummyC.vcxproj", "{70B35B60-C937-46B9-A458-BC87E080D888}"

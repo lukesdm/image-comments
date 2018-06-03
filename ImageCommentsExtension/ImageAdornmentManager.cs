@@ -6,6 +6,7 @@ namespace LM.ImageComments.EditorComponent
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Xml;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Formatting;
@@ -42,6 +43,8 @@ namespace LM.ImageComments.EditorComponent
         /// </summary>
         public static void ToggleEnabled()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Enabled = !Enabled;
             string message = string.Format("Image comments {0}. Scroll editor window(s) to update.",
                 Enabled ? "enabled" : "disabled");
@@ -72,6 +75,8 @@ namespace LM.ImageComments.EditorComponent
         /// </summary>
         private void LayoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (!Enabled)
                 return;
 
@@ -121,6 +126,8 @@ namespace LM.ImageComments.EditorComponent
 #pragma warning disable 219
             bool imageDetected = false; // useful for tracing
 #pragma warning restore 219
+
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             string lineText = line.Extent.GetText();
             string matchedText;

@@ -166,3 +166,4 @@ pip-log.txt
 
 # Nuget packages
 /packages
+/paket-files

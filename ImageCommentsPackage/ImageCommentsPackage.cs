@@ -26,6 +26,8 @@
         /// </summary>
         protected override void Initialize()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Trace.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
