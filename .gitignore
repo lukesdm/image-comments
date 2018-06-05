@@ -167,3 +167,4 @@ pip-log.txt
 # Nuget packages
 /packages
 /paket-files
+/ImageCommentsPackage/Output/ImageComments.vsix
