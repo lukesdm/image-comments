@@ -45,7 +45,7 @@ If there's a problem trying to load the image or parse the tag, the tag will be 
 ![](http://lukesdm.github.com/image-comments/media/error-example-1.png)
 
 
-The languages currently supported are Python, C#, C, C++ and VB.
+The languages currently supported are Python, C#, F#, C, C++ and VB.
 
 
 Image-comments don't really have anything to do with XML comments, but the format is convenient and it should be pretty straight-forward to transform them for Sandcastle documentation creation.
