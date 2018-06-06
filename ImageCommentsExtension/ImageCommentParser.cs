@@ -60,6 +60,7 @@ namespace LM.ImageComments.EditorComponent
             {
                 case "C/C++":
                 case "CSharp":
+				case "F#":
                     commentMatch = _csharpImageCommentRegex.Match(lineText);
                     indentMatch = _csharpIndentRegex.Match(lineText);
                     break;

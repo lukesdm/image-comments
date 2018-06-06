@@ -9,7 +9,7 @@ namespace LM.ImageComments.EditorComponent
     /// that instantiates the adornment on the event of a <see cref="IWpfTextView"/>'s creation
     /// </summary>
     [Export(typeof(IWpfTextViewCreationListener))]
-    [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic")]
+    [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic"), ContentType("F#")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     internal sealed class ImageAdornmentManagerFactory : IWpfTextViewCreationListener
     {

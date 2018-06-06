@@ -1,11 +1,14 @@
 ﻿namespace LM.ImageComments.EditorComponent
 {
+    using Microsoft.VisualStudio.Shell;
     using System;
 
     internal static class ExceptionHandler
     {
         public static void Notify(Exception ex, bool showMessage)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string message = string.Format("{0}: {1}", DateTime.Now, ex.ToString());
             Console.WriteLine(message);
             if (showMessage)

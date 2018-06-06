@@ -51,7 +51,6 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="CommentPics\Koala.jpg" />
   </ItemGroup>
