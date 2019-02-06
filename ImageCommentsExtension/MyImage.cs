@@ -73,6 +73,18 @@ namespace LM.ImageComments.EditorComponent
             try
             {
                 var expandedUrl = _variableExpander.ProcessText(imageUrl);
+                if (!File.Exists(expandedUrl))
+                {
+                  // if the file does not exists, but we have an existing "docfx.json", lets try to find file in "$(ProjectDir)\images" directory
+                  var jsonFile = _variableExpander.ProcessText("$(ProjectDir)\\docfx.json");
+                  if (File.Exists(jsonFile))
+                  {
+                    // Example: we replace in "..\\images\picture.png" all the ".." with "$ProjectDir" --> "$ProjectDir\\images\\picture.png"
+                    imageUrl = imageUrl.Replace("..", "$(ProjectDir)");
+                    expandedUrl = _variableExpander.ProcessText(imageUrl);
+                  }
+                }
+
                 if (File.Exists(expandedUrl))
                 {
                     var data = new MemoryStream(File.ReadAllBytes(expandedUrl));
