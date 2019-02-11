@@ -38,6 +38,8 @@ You can use the VS environment variables $(ProjectDir), $(SolutionDir), and $(It
 
 `# <image url="$(SolutionDir)\CommonImages\Fourier.jpg" />` 
 
+Please note, if you use docfx at the same time, these environment variables must not be used, because docfx expects the images in a directory, e.g. "./images".
+
 
 Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-us/library/ms610982) with a [BitmapFrame](http://msdn.microsoft.com/en-us/library/ms619213) source, and accepted image and URL formats are tied to those, e.g. BMP, PNG, JPG all work as image formats, and C:\Path\To\Image.png, http://www.server.com/image.png and \\\server\folder\image.png all work as URLs.
 
