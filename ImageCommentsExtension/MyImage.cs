@@ -13,7 +13,7 @@ namespace LM.ImageComments.EditorComponent
     /// </summary>
     internal class MyImage : Image
     {
-		private double _scale;
+        private double _scale;
         private VariableExpander _variableExpander;
         private FileSystemWatcher _watcher;
 
@@ -70,10 +70,17 @@ namespace LM.ImageComments.EditorComponent
                 watcher.Dispose();
             // ---
             exception = null;
+
+            if (string.IsNullOrWhiteSpace(imageUrl))
+            {
+                Source = null;
+                return false;
+            }
+
             try
             {
                 var expandedUrl = _variableExpander.ProcessText(imageUrl);
-                if (!File.Exists(expandedUrl))
+                if (!File.Exists(expandedUrl)) //TODO: Refactor this eg. post processing step
                 {
                   // if the file does not exists, but we have an existing "docfx.json", lets try to find file in "$(ProjectDir)\images" directory
                   var jsonFile = _variableExpander.ProcessText("$(ProjectDir)\\docfx.json");
@@ -85,7 +92,14 @@ namespace LM.ImageComments.EditorComponent
                   }
                 }
 
-                if (File.Exists(expandedUrl))
+                var uri = new Uri(_variableExpander.ProcessText(expandedUrl), UriKind.Absolute);
+                if (uri.Scheme == "data")
+                {
+                    //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
+                    //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
+                    Source = BitmapFrame.Create(DataUriLoader.Load(uri));
+                }
+                else if (File.Exists(expandedUrl))
                 {
                     var data = new MemoryStream(File.ReadAllBytes(expandedUrl));
                     Source = BitmapFrame.Create(data);
@@ -116,28 +130,25 @@ namespace LM.ImageComments.EditorComponent
                     _watcher.Deleted += refresh;
                     _watcher.EnableRaisingEvents = true;
                 }
-				else
-				{
-               		//TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
-					//  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
-					Uri uri = new Uri(_variableExpander.ProcessText(expandedUrl), UriKind.Absolute);
-
-					if (uri.Scheme == "data")
-						Source = BitmapFrame.Create(DataUriLoader.Load(uri));
-					else
-						Source = BitmapFrame.Create(uri);
-				}
-
-                if (bgColor.A != 0)
+                else
                 {
-                    Source = ReplaceTransparency(Source, bgColor);
-                    BgColor = bgColor;
+                    Source = null;
+                }
+
+                if (Source != null)
+                {
+                    if (bgColor.A != 0)
+                    {
+                        Source = ReplaceTransparency(Source, bgColor);
+                        BgColor = bgColor;
+                    }
                 }
 
                 Url = imageUrl;
             }
             catch (Exception ex)
             {
+                Source = null;
                 exception = ex;
                 return false;
             }

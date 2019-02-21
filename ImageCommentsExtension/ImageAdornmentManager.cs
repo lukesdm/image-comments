@@ -123,17 +123,14 @@ namespace LM.ImageComments.EditorComponent
         /// </summary>
         private void CreateVisuals(ITextViewLine line, int lineNumber)
         {
-#pragma warning disable 219
-            bool imageDetected = false; // useful for tracing
-#pragma warning restore 219
-
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            string lineText = line.Extent.GetText();
+            string lineText = line.Extent.GetText().Split(new string[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
             string matchedText;
             int matchIndex = ImageCommentParser.Match(_contentTypeName, lineText, out matchedText);
             if (matchIndex >= 0)
             {
+                lineText = line.Extent.GetText().Split(new string[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
                 // Get coordinates of text
                 int start = line.Extent.Start.Position + matchIndex;
                 int end = line.Start + (line.Extent.Length - 1);
@@ -182,7 +179,7 @@ namespace LM.ImageComments.EditorComponent
                 }
 
                 // Position image and add as adornment
-                if (imageLoadingException == null)
+                if (imageLoadingException == null && image.Source!= null)
                 {
                     
                     Geometry g = _view.TextViewLines.GetMarkerGeometry(span);
@@ -210,16 +207,28 @@ namespace LM.ImageComments.EditorComponent
                 else
                 {
                     if (Images.ContainsKey(lineNumber))
+                    {
                         Images.Remove(lineNumber);
 
-                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("Trouble loading image", GetErrorMessage(imageLoadingException))));
+                    }
+
+                    if(image.Source==null)
+                    {
+                        _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("No image set")));
+                    }
+                    else
+                    {
+                        _errorTags.Add(new TagSpan<ErrorTag>(span,
+                            new ErrorTag("Trouble loading image", GetErrorMessage(imageLoadingException))));
+                    }
                 }
-                imageDetected = true;
             }
             else
             {
                 if (Images.ContainsKey(lineNumber))
+                {
                     Images.Remove(lineNumber);
+                }
             }
         }
 

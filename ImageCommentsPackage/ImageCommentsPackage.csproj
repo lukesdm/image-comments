@@ -107,7 +107,14 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Images_32bit.bmp" />
+    <Content Include="img_cmt.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\Images_32bit.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.txt">
@@ -462,7 +469,7 @@
       </ItemGroup>
     </When>
   </Choose>
-    <PropertyGroup>
+  <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir)\ImageComments.vsix $(SolutionDir)Output\ImageComments.vsix</PostBuildEvent>
-    </PropertyGroup>
+  </PropertyGroup>
 </Project>
