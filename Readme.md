@@ -1,6 +1,6 @@
 # ImageComments (a Visual Studio Extension)
 
-This fork is an updated version with all sound patches from the different forks out there.
+This fork is an updated version with extended syntax for linking graphics for simultaneous use of docfx.
 
 ## Overview
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
@@ -15,6 +15,8 @@ Disclaimer: This project is a WIP and it's pretty rough around the edges. Please
 Supported Visual Studio Verions 2010~2015 (2017 warns about missing support, but works)
 
 ### Download/Installation
+[Download VS17](https://github.com/jvanderwald/image-comments/blob/master/Output/ImageComments.vsix)
+
 [Download VS13/14/15](https://github.com/TomSmartBishop/image-comments/raw/master/Output/ImageComments.vsix)
 
 [Download VS10/12](https://github.com/TomSmartBishop/image-comments/raw/master/Output/ImageComments.VS10.vsix)
@@ -24,7 +26,8 @@ To install double-click/activate the VSIX file.
 ### How to use
 Image-comments are declared with:
 
-`/// <image url="X:\Path\To\Image.ext" scale="Y" />`
+`/// <image url="X:\Path\To\Image.ext" scale="Y" />` or `/// <img src="X:\Path\To\Image.ext" scale="Y" />`
+
 
 The `scale` attribute multiplies the source width and height by Y and is optional.
 
@@ -34,6 +37,8 @@ You can also specify the `bgcolor` attribute to set a background color for pictu
 You can use the VS environment variables $(ProjectDir), $(SolutionDir), and $(ItemDir) in URLs, e.g.:
 
 `# <image url="$(SolutionDir)\CommonImages\Fourier.jpg" />` 
+
+Please note, if you use docfx at the same time, these environment variables must not be used, because docfx expects the images in a directory, e.g. "./images".
 
 
 Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-us/library/ms610982) with a [BitmapFrame](http://msdn.microsoft.com/en-us/library/ms619213) source, and accepted image and URL formats are tied to those, e.g. BMP, PNG, JPG all work as image formats, and C:\Path\To\Image.png, http://www.server.com/image.png and \\\server\folder\image.png all work as URLs.

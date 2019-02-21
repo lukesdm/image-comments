@@ -25,7 +25,8 @@ namespace LM.ImageComments.EditorComponent
         // Initialize regex objects
         static ImageCommentParser()
         {
-            const string xmlImageTagPattern = @"<image.*>";
+            // alternate Regex "image" for use with docfx
+            const string xmlImageTagPattern = @"<img.*>|<image.*>";
 
             // C/C++/C#
             const string cSharpIndent = @"//\s+";
@@ -106,10 +107,16 @@ namespace LM.ImageComments.EditorComponent
                 try
                 {
                     XElement imgEl = XElement.Parse(tagText);
-                    XAttribute srcAttr = imgEl.Attribute("url");
+                    XAttribute srcAttr = imgEl.Attribute("src");
+
+                    // alternate Attributename "url" used by docfx
                     if (srcAttr == null)
                     {
-                        exception = new XmlException("url attribute not specified.");
+                        srcAttr = imgEl.Attribute("url");
+                    }
+                    if (srcAttr == null)
+                    {
+                        exception = new XmlException("src (or url) attribute not specified.");
                         return false;
                     }
                     imageUrl = srcAttr.Value;
@@ -145,7 +152,7 @@ namespace LM.ImageComments.EditorComponent
             }
             else
             {
-                exception = new XmlException("<image... /> tag not in correct format.");
+                exception = new XmlException("<img... /> or <image... /> tag not in correct format.");
                 return false;
             }
         }
