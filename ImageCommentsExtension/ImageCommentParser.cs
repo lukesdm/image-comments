@@ -12,15 +12,13 @@ namespace LM.ImageComments.EditorComponent
     // TODO [?]: Could make this a non-static class and use instances, but ensure a new instance is created when content type of a view is changed.
     internal static class ImageCommentParser
     {
-
-
-        private static Regex _csharpImageCommentRegex;
-        private static Regex _csharpIndentRegex;
-        private static Regex _vbImageCommentRegex;
-        private static Regex _vbIndentRegex;
-		private static Regex _pythonImageCommentRegex;
-		private static Regex _pythonIndentRegex;
-        private static Regex _xmlImageTagRegex;
+        private static readonly Regex CsharpImageCommentRegex;
+        private static readonly Regex CsharpIndentRegex;
+        private static readonly Regex VbImageCommentRegex;
+        private static readonly Regex VbIndentRegex;
+        private static readonly Regex PythonImageCommentRegex;
+        private static readonly Regex PythonIndentRegex;
+        private static readonly Regex XmlImageTagRegex;
 
         // Initialize regex objects
         static ImageCommentParser()
@@ -30,23 +28,23 @@ namespace LM.ImageComments.EditorComponent
 
             // C/C++/C#
             const string cSharpIndent = @"//\s+";
-            _csharpIndentRegex = new Regex(cSharpIndent, RegexOptions.Compiled);
+            CsharpIndentRegex = new Regex(cSharpIndent, RegexOptions.Compiled);
             const string cSharpCommentPattern = @"//.*";
-            _csharpImageCommentRegex = new Regex(cSharpCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
+            CsharpImageCommentRegex = new Regex(cSharpCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
             // VB
             const string vbIndent = @"'\s+";
-            _vbIndentRegex = new Regex(vbIndent, RegexOptions.Compiled);
+            VbIndentRegex = new Regex(vbIndent, RegexOptions.Compiled);
             const string vbCommentPattern = @"'.*";
-            _vbImageCommentRegex = new Regex(vbCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
+            VbImageCommentRegex = new Regex(vbCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
             //Python
-			const string pythonIndent = @"#\s+";
-            _pythonIndentRegex = new Regex(pythonIndent, RegexOptions.Compiled);
+            const string pythonIndent = @"#\s+";
+            PythonIndentRegex = new Regex(pythonIndent, RegexOptions.Compiled);
             const string pythonCommentPattern = @"#.*";
-            _pythonImageCommentRegex = new Regex(pythonCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
+            PythonImageCommentRegex = new Regex(pythonCommentPattern + xmlImageTagPattern, RegexOptions.Compiled);
 
-            _xmlImageTagRegex = new Regex(xmlImageTagPattern, RegexOptions.Compiled);
+            XmlImageTagRegex = new Regex(xmlImageTagPattern, RegexOptions.Compiled);
         }
 
         /// <summary>
@@ -61,17 +59,18 @@ namespace LM.ImageComments.EditorComponent
             {
                 case "C/C++":
                 case "CSharp":
-				case "F#":
-                    commentMatch = _csharpImageCommentRegex.Match(lineText);
-                    indentMatch = _csharpIndentRegex.Match(lineText);
+                case "JScript":
+                case "F#":
+                    commentMatch = CsharpImageCommentRegex.Match(lineText);
+                    indentMatch = CsharpIndentRegex.Match(lineText);
                     break;
                 case "Basic":
-                    commentMatch = _vbImageCommentRegex.Match(lineText);
-                    indentMatch = _vbIndentRegex.Match(lineText);
+                    commentMatch = VbImageCommentRegex.Match(lineText);
+                    indentMatch = VbIndentRegex.Match(lineText);
                     break;
                 case "Python":
-                    commentMatch = _pythonImageCommentRegex.Match(lineText);
-                    indentMatch = _pythonIndentRegex.Match(lineText);
+                    commentMatch = PythonImageCommentRegex.Match(lineText);
+                    indentMatch = PythonIndentRegex.Match(lineText);
                     break;
                 //TODO: Add support for more languages
                 default:
@@ -86,37 +85,39 @@ namespace LM.ImageComments.EditorComponent
             
             return indentMatch.Index + indentMatch.Length;
         }
+
         /// <summary>
         /// Looks for well formed image comment in line of text and tries to parse parameters
         /// </summary>
         /// <param name="matchedText">Input: Line of text in editor window</param>
         /// <param name="imageUrl">Output: URL of image</param>
         /// <param name="imageScale">Output: Scale factor of image </param>
-        /// <param name="ex">Instance of any exception generated. Null if function finished succesfully</param>
+        /// <param name="bgColor">The backgroundcolor if set</param>
+        /// <param name="error">An error string describing the problem if parsing failed</param>
         /// <returns>Returns true if successful, otherwise false</returns>
-        public static bool TryParse(string matchedText, out string imageUrl, out double imageScale, ref Color bgColor, out Exception exception)
+        public static bool TryParse(string matchedText, out string imageUrl, out double imageScale, ref Color bgColor, out string error)
         {
-            exception = null;
+            error = null;
             imageUrl = "";
             imageScale = 0; // See MyImage.cs for explanation of default value here
             
             // Try parse text
             if (matchedText != "")
             {
-                string tagText = _xmlImageTagRegex.Match(matchedText).Value;
+                string tagText = XmlImageTagRegex.Match(matchedText).Value;
                 try
                 {
                     XElement imgEl = XElement.Parse(tagText);
                     XAttribute srcAttr = imgEl.Attribute("src");
 
-                    // alternate Attributename "url" used by docfx
+                    // alternate Attribute name "url" used by docfx
                     if (srcAttr == null)
                     {
                         srcAttr = imgEl.Attribute("url");
                     }
                     if (srcAttr == null)
                     {
-                        exception = new XmlException("src (or url) attribute not specified.");
+                        error = "src (or url) attribute not specified.";
                         return false;
                     }
                     imageUrl = srcAttr.Value;
@@ -146,13 +147,13 @@ namespace LM.ImageComments.EditorComponent
                 }
                 catch (Exception ex)
                 {
-                    exception = ex;
+                    error = ex.Message;
                     return false;
                 }
             }
             else
             {
-                exception = new XmlException("<img... /> or <image... /> tag not in correct format.");
+                error = "<img... /> or <image... /> tag not in correct format.";
                 return false;
             }
         }

@@ -2,7 +2,7 @@ namespace Parties
 {
     public class PhotoParty
     {
-        /// <image url="C:\Users\Public\Pictures\Sample Pictures\Penguins.jpg" scale="0.2" />
+        /// <image url="http://bit.ly/108beTg" bgcolor="ffffff" />
         public static void Penguins()
         {
             ;

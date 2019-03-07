@@ -1,3 +1,5 @@
+using Microsoft.VisualStudio.Text;
+
 namespace LM.ImageComments.EditorComponent
 {
     using System.ComponentModel.Composition;
@@ -9,10 +11,19 @@ namespace LM.ImageComments.EditorComponent
     /// that instantiates the adornment on the event of a <see cref="IWpfTextView"/>'s creation
     /// </summary>
     [Export(typeof(IWpfTextViewCreationListener))]
-    [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic"), ContentType("F#")]
+    [
+        ContentType("CSharp"),
+        ContentType("C/C++"),
+        ContentType("Basic"),
+        ContentType("F#"),
+        ContentType("JScript"),
+        ContentType("Python")
+    ]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     internal sealed class ImageAdornmentManagerFactory : IWpfTextViewCreationListener
     {
+        [Import] public ITextDocumentFactoryService TextDocumentFactory { get; set; }
+
         /// <summary>
         /// Defines the adornment layer for the adornment. This layer is ordered 
         /// after the selection layer in the Z-order
@@ -21,7 +32,7 @@ namespace LM.ImageComments.EditorComponent
         [Name("ImageCommentLayer")]
         [Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Text)]
         [TextViewRole(PredefinedTextViewRoles.Document)]
-        public AdornmentLayerDefinition editorAdornmentLayer = null;
+        public AdornmentLayerDefinition EditorAdornmentLayer = null;
 
         /// <summary>
         /// Instantiates a ImageAdornment manager when a textView is created.
@@ -29,7 +40,8 @@ namespace LM.ImageComments.EditorComponent
         /// <param name="textView">The <see cref="IWpfTextView"/> upon which the adornment should be placed</param>
         public void TextViewCreated(IWpfTextView textView)
         {
-            textView.Properties.GetOrCreateSingletonProperty<ImageAdornmentManager>(() => new ImageAdornmentManager(textView));
+            ImageAdornmentManager manager = textView.Properties.GetOrCreateSingletonProperty<ImageAdornmentManager>("ImageAdornmentManager", () => new ImageAdornmentManager(textView));
+            manager.TextDocumentFactory = TextDocumentFactory;
         }
     }
 }

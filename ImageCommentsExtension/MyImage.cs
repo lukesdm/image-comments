@@ -58,18 +58,21 @@ namespace LM.ImageComments.EditorComponent
         /// <summary>
         /// Sets image source and size (by scale factor)
         /// </summary>
+        /// <param name="directory">The directory where the text document referencing the image lives</param>
+        /// <param name="imageUrl">The url to the image</param>
         /// <param name="scale">If > 0, scales the image by the specified amount, otherwise uses source image dimensions</param>
-        /// <param name="exception">Is set to the Exception instance if image couldn't be loaded, otherwise null</param>
+        /// <param name="bgColor">The background color used for transparent images</param>
+        /// <param name="error">Error message if image couldn't be loaded, otherwise null</param>
+        /// <param name="refreshAction">The action to be performed if the image was successfully refreshed</param>
         /// <returns>Returns true if image was successfully loaded, otherwise false</returns>
-        public bool TrySet(string imageUrl, double scale, Color bgColor, out Exception exception, Action refreshAction)
+        public bool TrySet(string directory, string imageUrl, double scale, Color bgColor, out String error, Action refreshAction)
         {
             // Remove old watcher.
             var watcher = _watcher;
             _watcher = null;
-            if(watcher!=null)
-                watcher.Dispose();
+            watcher?.Dispose();
             // ---
-            exception = null;
+            error = null;
 
             if (string.IsNullOrWhiteSpace(imageUrl))
             {
@@ -92,14 +95,26 @@ namespace LM.ImageComments.EditorComponent
                   }
                 }
 
-                var uri = new Uri(_variableExpander.ProcessText(expandedUrl), UriKind.Absolute);
-                if (uri.Scheme == "data")
+                var success = Uri.TryCreate(_variableExpander.ProcessText(expandedUrl), UriKind.Absolute, out var uri);
+                var canLoadData = success && DataUriLoader.CanLoad(uri);
+                var canLoadFromWeb = success && WebLoader.CanLoad(uri);
+                if (canLoadData)
                 {
                     //TODO [!]: Currently, this loading system prevents images from being changed on disk, fix this
                     //  e.g. using http://stackoverflow.com/questions/1763608/display-an-image-in-wpf-without-holding-the-file-open
                     Source = BitmapFrame.Create(DataUriLoader.Load(uri));
                 }
-                else if (File.Exists(expandedUrl))
+                else if(canLoadFromWeb)
+                {
+                    expandedUrl = WebLoader.Load(uri);
+                }
+                else if (!success && !Path.IsPathRooted(expandedUrl) && directory != null)
+                {
+                    expandedUrl = Path.Combine(directory, expandedUrl);
+                    expandedUrl = Path.GetFullPath((new Uri(expandedUrl)).LocalPath);
+                }
+
+                if (!canLoadData && File.Exists(expandedUrl))
                 {
                     var data = new MemoryStream(File.ReadAllBytes(expandedUrl));
                     Source = BitmapFrame.Create(data);
@@ -133,6 +148,8 @@ namespace LM.ImageComments.EditorComponent
                 else
                 {
                     Source = null;
+                    error = $"Could not load image '{expandedUrl}'";
+                    return false;
                 }
 
                 if (Source != null)
@@ -149,7 +166,7 @@ namespace LM.ImageComments.EditorComponent
             catch (Exception ex)
             {
                 Source = null;
-                exception = ex;
+                error = ex.Message;
                 return false;
             }
             this.Scale = scale;

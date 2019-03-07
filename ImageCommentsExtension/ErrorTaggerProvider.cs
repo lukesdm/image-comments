@@ -8,7 +8,14 @@
     using System.Diagnostics;
 
     [Export(typeof(IViewTaggerProvider))]
-    [ContentType("CSharp"), ContentType("C/C++"), ContentType("Basic"), ContentType("Python"), ContentType("F#")]
+    [
+        ContentType("CSharp"),
+        ContentType("C/C++"),
+        ContentType("Basic"),
+        ContentType("F#"),
+        ContentType("JScript"),
+        ContentType("Python")
+    ]
     [TagType(typeof(ErrorTag))]
     internal class ErrorTaggerProvider : IViewTaggerProvider
     {
@@ -25,8 +32,7 @@
             }
 
             Trace.Assert(textView is IWpfTextView);
-
-            ImageAdornmentManager imageAdornmentManager = textView.Properties.GetOrCreateSingletonProperty<ImageAdornmentManager>(() => new ImageAdornmentManager((IWpfTextView)textView));
+            ImageAdornmentManager imageAdornmentManager = textView.Properties.GetOrCreateSingletonProperty<ImageAdornmentManager>("ImageAdornmentManager", () => new ImageAdornmentManager((IWpfTextView)textView));
             return imageAdornmentManager as ITagger<T>;
         }
     }
