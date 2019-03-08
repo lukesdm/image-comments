@@ -22,8 +22,7 @@
             IVsOutputWindow outWindow = Package.GetGlobalService(typeof(SVsOutputWindow)) as IVsOutputWindow;
 
             Guid debugPaneGuid = VSConstants.GUID_OutWindowDebugPane;
-            IVsOutputWindowPane debugPane;
-            int gotPane = outWindow.GetPane(ref debugPaneGuid, out debugPane);
+            int gotPane = outWindow.GetPane(ref debugPaneGuid, out var debugPane);
             if (gotPane == VSConstants.S_OK)
             {
                 debugPane.OutputString("[ImageComments Extension] " + message + "\n");

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudio.Text.Formatting;
@@ -11,6 +10,7 @@ namespace LM.ImageComments.EditorComponent
         ContentType("CSharp"),
         ContentType("C/C++"),
         ContentType("Basic"),
+        ContentType("code++.F#"),
         ContentType("F#"),
         ContentType("JScript"),
         ContentType("Python")

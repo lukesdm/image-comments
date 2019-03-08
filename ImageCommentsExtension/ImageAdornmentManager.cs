@@ -27,7 +27,7 @@ namespace LM.ImageComments.EditorComponent
         public static bool Enabled { get; set; }
 
         // Dictionary to map line number to image
-        internal Dictionary<int, MyImage> Images { get; set; }
+        internal Dictionary<int, CommentImage> Images { get; set; }
 
         /// <summary>
         /// Initializes static members of the <see cref="ImageAdornmentManager"/> class
@@ -52,9 +52,8 @@ namespace LM.ImageComments.EditorComponent
         {
             _view = view;
             _layer = view.GetAdornmentLayer("ImageCommentLayer");
-            Images = new Dictionary<int, MyImage>();
+            Images = new Dictionary<int, CommentImage>();
             _view.LayoutChanged += LayoutChangedHandler;
-
             _contentTypeName = view.TextBuffer.ContentType.TypeName;
             _view.TextBuffer.ContentTypeChanged += contentTypeChangedHandler;
 
@@ -79,7 +78,6 @@ namespace LM.ImageComments.EditorComponent
 
             _errorTags.Clear();
             TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length))));
-
             OnTagsChanged(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length)));
 
             foreach (var line in _view.TextViewLines) // TODO [?]: implement more sensible handling of removing error tags, then use e.NewOrReformattedLines
@@ -122,20 +120,19 @@ namespace LM.ImageComments.EditorComponent
             ThreadHelper.ThrowIfNotOnUIThread();
 
             var directory = absFilename!=null ? System.IO.Path.GetDirectoryName(absFilename) : null;
-            var lineText = line.Extent.GetText().Split(new string[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
+            var lineText = line.Extent.GetText().Split(new[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
             var matchIndex = ImageCommentParser.Match(_contentTypeName, lineText, out var matchedText);
             if (matchIndex >= 0)
             {
-                lineText = line.Extent.GetText().Split(new string[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
+                //lineText = line.Extent.GetText().Split(new string[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
                 // Get coordinates of text
                 var start = line.Extent.Start.Position + matchIndex;
                 var end = line.Start + (line.Extent.Length - 1);
                 var span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
 
-                var bgColor = new Color();
-                ImageCommentParser.TryParse(matchedText, out var imageUrl, out var scale, ref bgColor, out var xmlParseError);
+                ImageCommentParser.TryParse(matchedText, out var parsedImgData, out var parsingError);
 
-                if (xmlParseError != null)
+                if (parsingError != null)
                 {
                     if (Images.ContainsKey(lineNumber))
                     {
@@ -144,31 +141,26 @@ namespace LM.ImageComments.EditorComponent
                     }
 
                     _errorTags.Add(new TagSpan<ErrorTag>(span,
-                        new ErrorTag("XML parse error", $"Problem with comment format: {xmlParseError}")));
+                        new ErrorTag("XML parse error", $"Problem with comment format: {parsingError}")));
 
                     return;
                 }
 
-                MyImage image;
                 string loadingMessage = null;
                 
                 // Check for and update existing image
-                MyImage existingImage = Images.ContainsKey(lineNumber) ? Images[lineNumber] : null;
-                if (existingImage != null)
+                CommentImage image = Images.ContainsKey(lineNumber) ? Images[lineNumber] : null;
+                if (image != null)
                 {
-                    image = existingImage;
-                    if (existingImage.Url != imageUrl || existingImage.BgColor!= bgColor) // URL different, so set new source
+                    if (!image.Attributes.Equals(parsedImgData)) // URL different, so set new source
                     {
-                        existingImage.TrySet(directory, imageUrl, scale, bgColor, out loadingMessage, () => CreateVisuals(line, lineNumber, absFilename));
-                    } else if (existingImage.Url == imageUrl && Math.Abs(existingImage.Scale - scale) > 0.0001) // URL same but scale changed
-                    {
-                        existingImage.Scale = scale;
+                        image.TrySet(directory, parsedImgData, out loadingMessage, () => CreateVisuals(line, lineNumber, absFilename));
                     }
                 }
                 else // No existing image, so create new one
                 {
-                    image = new MyImage(_variableExpander);
-                    image.TrySet(directory, imageUrl, scale, bgColor, out loadingMessage, () => CreateVisuals(line, lineNumber, absFilename));
+                    image = new CommentImage(_variableExpander);
+                    image.TrySet(directory, parsedImgData, out loadingMessage, () => CreateVisuals(line, lineNumber, absFilename));
                     Images.Add(lineNumber, image);
                 }
 

@@ -9,7 +9,7 @@
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            string message = string.Format("{0}: {1}", DateTime.Now, ex.ToString());
+            string message = $"{DateTime.Now}: {ex.ToString()}";
             Console.WriteLine(message);
             if (showMessage)
             {

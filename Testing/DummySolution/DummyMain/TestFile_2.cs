@@ -2,7 +2,7 @@ namespace Parties
 {
     public class PhotoParty
     {
-        /// <image url="http://bit.ly/108beTg" bgcolor="ffffff" />
+        /// <image url="http://bit.ly/108beTg" bgcolor="ffffff80" />
         public static void Penguins()
         {
             ;
@@ -17,7 +17,7 @@ namespace Parties
         }
 
         /// <summary>
-        /// <image url="$(SolutionDir)\CommonImages\Tile.jpg" />
+        /// <image url="$(SolutionDir)\CommonImages\Tile.jpg" Opacity="0.3" />
         /// </summary>
         public static void Misc()
         {

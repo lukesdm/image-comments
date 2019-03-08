@@ -12,6 +12,7 @@
         ContentType("CSharp"),
         ContentType("C/C++"),
         ContentType("Basic"),
+        ContentType("code++.F#"),
         ContentType("F#"),
         ContentType("JScript"),
         ContentType("Python")

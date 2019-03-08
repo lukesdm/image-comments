@@ -16,7 +16,7 @@ namespace Parties
 
         /// <summary>
         /// Gets point of intersection of line and plane. 3 cases to consider.
-        /// <image url="http://bit.ly/108beTg" scale="0.7" />
+        /// <image url="http://bit.ly/108beTg" scale="0.7" bgcolor="fff" opacity="0.5"/>
         /// </summary>
         public Point LinePlaneIntersecter(Plane plane, Line line)
         {

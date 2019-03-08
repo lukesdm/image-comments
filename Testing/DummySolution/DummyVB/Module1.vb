@@ -2,7 +2,8 @@
 ''' 
 ''' </summary>
 ''' <remarks></remarks>
-''' <image url="..\DummyMain\CommentPics\Koala.jpg" scale="0.25"></image>
+''' <image url="..\DummyMain\CommentPics\Koala.jpg" scale="0.25" opacity="0.5"></image>
+
 Module Module1
 
     Sub Main()

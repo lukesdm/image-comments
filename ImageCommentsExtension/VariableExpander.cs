@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using EnvDTE;
 using EnvDTE80;
@@ -21,7 +18,7 @@ namespace LM.ImageComments
     ///   $(SolutionDir)
     ///   $(ItemDir)
     /// </summary>
-    class VariableExpander
+    public class VariableExpander
     {
         private readonly Regex _variableMatcher;
         private const string VARIABLE_PATTERN = @"\$\(\S+?\)";
@@ -39,11 +36,7 @@ namespace LM.ImageComments
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (view == null)
-            {
-                 throw new ArgumentNullException("view");
-            }
-            _view = view;
+            _view = view ?? throw new ArgumentNullException(nameof(view));
             _variableMatcher = new Regex(VARIABLE_PATTERN, RegexOptions.Compiled);
 
             try
@@ -85,8 +78,7 @@ namespace LM.ImageComments
             }
             else if (string.Compare(variableName, ITEMDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
             {
-                ITextDocument document;
-                if (_view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof(ITextDocument), out document))
+                if (_view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof(ITextDocument), out ITextDocument document))
                 {
                     return Path.GetDirectoryName(document.FilePath);
                 }
@@ -113,8 +105,8 @@ namespace LM.ImageComments
             _projectDirectory = "";
             _solutionDirectory = "";
             
-            ITextDocument document;
-            _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out document);
+
+            _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out ITextDocument document);
             var dte2 = (DTE2)Package.GetGlobalService(typeof (SDTE));
             ProjectItem projectItem = dte2.Solution.FindProjectItem(document.FilePath);
             
