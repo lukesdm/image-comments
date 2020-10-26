@@ -1,7 +1,5 @@
 # ImageComments (a Visual Studio Extension)
 
-This fork is an updated version with all sound patches from the different forks out there. all sound patches from the different forks out there.
-
 ## Overview
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
 
@@ -12,10 +10,10 @@ This is an extension for the Visual Studio code editor that allows images to be 
 ### Preamble
 Disclaimer: This project is a WIP and it's pretty rough around the edges. Please report issues on the GitHub repo.
 
-Supported Visual Studio Verions 2010~2015 (2017 warns about missing support, but works)
+Supported Visual Studio Verions: 2019 (though earlier releases support 2010~2017)
 
 ### Download/Installation
-[Latest 1.1.4.4](https://github.com/TomSmartBishop/image-comments/raw/master/Output/ImageComments.vsix)
+[Latest 1.2.0.0](https://github.com/lukesdm/image-comments/raw/master/Output/ImageComments.vsix)
 
 To install double-click/activate the VSIX file.
 
@@ -83,6 +81,7 @@ There are two components to the extension:
 * ImageCommentsPackage. Adds a command to enable/disable functionality; VSIX definition.
 
 For testing information, see .\Testing\Testing.html
+
 ### Some known implementation issues
 The code is a bit rough - it may not need a rewrite from scratch, but there's a bunch of stuff to be done
 
@@ -96,8 +95,5 @@ The code is a bit rough - it may not need a rewrite from scratch, but there's a 
 ## License
 Eclipse Public License v1.0. See [license text](http://github.com/lukesdm/image-comments/raw/master/License.txt) for details.
 
-## Author
-The original plugin was made by Luke McQuade, this fork is maintained by Thomas Pollak. Further contributors: Lionsoft, Oleg Kosmakov, Morten Engelhardt Olsen, Wolfgang Kleinschmit, Sören Nils Kuklau, Tim Long
-
-
-
+## Authors & Contributors
+Luke McQuade (creator), Thomas Pollak, Lionsoft, Oleg Kosmakov, Morten Engelhardt Olsen, Wolfgang Kleinschmit, Sören Nils Kuklau, Tim Long, [your name here]
