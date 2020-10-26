@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using EnvDTE;
 using EnvDTE80;
@@ -19,14 +16,16 @@ namespace LM.ImageComments
     /// Currently supported variables are:
     ///   $(ProjectDir)
     ///   $(SolutionDir)
+    ///   $(ItemDir)
     /// </summary>
-    class VariableExpander
+    public class VariableExpander
     {
         private readonly Regex _variableMatcher;
         private const string VARIABLE_PATTERN = @"\$\(\S+?\)";
 
         private const string PROJECTDIR_PATTERN = "$(ProjectDir)";
         private const string SOLUTIONDIR_PATTERN = "$(SolutionDir)";
+        private const string ITEMDIR_PATTERN = "$(ItemDir)";
 
         private string _projectDirectory;
         private string _solutionDirectory;
@@ -35,11 +34,9 @@ namespace LM.ImageComments
 
         public VariableExpander(IWpfTextView view)
         {
-            if (view == null)
-            {
-                 throw new ArgumentNullException("view");
-            }
-            _view = view;
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            _view = view ?? throw new ArgumentNullException(nameof(view));
             _variableMatcher = new Regex(VARIABLE_PATTERN, RegexOptions.Compiled);
 
             try
@@ -79,6 +76,15 @@ namespace LM.ImageComments
             {
                 return _solutionDirectory;
             }
+            else if (string.Compare(variableName, ITEMDIR_PATTERN, StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                if (_view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof(ITextDocument), out ITextDocument document))
+                {
+                    return Path.GetDirectoryName(document.FilePath);
+                }
+
+                return variableName;
+            }
             else
             {
                 // Could throw an exception here, but it's possible the path contains $(...).
@@ -99,8 +105,8 @@ namespace LM.ImageComments
             _projectDirectory = "";
             _solutionDirectory = "";
             
-            ITextDocument document;
-            _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out document);
+
+            _view.TextDataModel.DocumentBuffer.Properties.TryGetProperty(typeof (ITextDocument), out ITextDocument document);
             var dte2 = (DTE2)Package.GetGlobalService(typeof (SDTE));
             ProjectItem projectItem = dte2.Solution.FindProjectItem(document.FilePath);
             

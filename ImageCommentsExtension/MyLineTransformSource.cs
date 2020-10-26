@@ -28,7 +28,7 @@
             if (_manager.Images.ContainsKey(lineNumber) && ImageAdornmentManager.Enabled)
             {
                 double defaultHeight = line.DefaultLineTransform.BottomSpace;
-                MyImage image = _manager.Images[lineNumber];
+                CommentImage image = _manager.Images[lineNumber];
                 lineTransform = new LineTransform(0, image.Height + defaultHeight, 1.0);
 
                 imageOnLine = true;
