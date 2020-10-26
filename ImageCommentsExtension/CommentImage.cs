@@ -24,7 +24,7 @@ namespace LM.ImageComments.EditorComponent
             Opacity = 1.0;
         }
 
-        public   bool IsEquals(object obj)
+        public bool IsEqual(object obj)
         {
             if (obj == null)
                 return false;

@@ -152,7 +152,7 @@ namespace LM.ImageComments.EditorComponent
                 CommentImage image = Images.ContainsKey(lineNumber) ? Images[lineNumber] : null;
                 if (image != null)
                 {
-                    if (!image.Attributes.IsEquals(parsedImgData)) // URL different, so set new source
+                    if (!image.Attributes.IsEqual(parsedImgData))
                     {
                         image.TrySet(directory, parsedImgData, out loadingMessage, () => CreateVisuals(line, lineNumber, absFilename));
                     }
