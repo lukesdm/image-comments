@@ -1,5 +1,5 @@
-#include <cstdio>
-/// <image url="C:\Users\Public\Pictures\Sample Pictures\hydrangeas.jpg" scale="0.2"/>
+#include <stdio.h>
+/// <image url="http://bit.ly/108beTg" bgcolor="cccccc" scale="0.8"/>
 int main()
 {
 	return 0;

@@ -2,10 +2,9 @@ namespace LM.ImageComments.EditorComponent
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Windows.Controls;
     using System.Windows.Media;
-    using System.Xml;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Formatting;
@@ -14,8 +13,22 @@ namespace LM.ImageComments.EditorComponent
     /// <summary>
     /// Important class. Handles creation of image adornments on appropriate lines and associated error tags.
     /// </summary>
-    internal class ImageAdornmentManager : ITagger<ErrorTag>, IDisposable
+    public class ImageAdornmentManager : ITagger<ErrorTag>, IDisposable
     {
+        private readonly IAdornmentLayer _layer;
+        private readonly IWpfTextView _view;
+        private readonly VariableExpander _variableExpander;
+        private string _contentTypeName;
+        private bool _initialised1;
+        private bool _initialised2;
+        private readonly List<ITagSpan<ErrorTag>> _errorTags;
+        public ITextDocumentFactoryService TextDocumentFactory { get; set; }
+
+        public static bool Enabled { get; set; }
+
+        // Dictionary to map line number to image
+        internal Dictionary<int, CommentImage> Images { get; set; }
+
         /// <summary>
         /// Initializes static members of the <see cref="ImageAdornmentManager"/> class
         /// </summary>
@@ -29,32 +42,18 @@ namespace LM.ImageComments.EditorComponent
         /// </summary>
         public static void ToggleEnabled()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             Enabled = !Enabled;
-            string message = string.Format("Image comments {0}. Scroll editor window(s) to update.",
-                Enabled ? "enabled" : "disabled");
-            UIMessage.Show(message);
+            UIMessage.Show($"Image comments enabled: {Enabled}. Scroll editor window(s) to update.");
         }
 
-        public static bool Enabled { get; set; }
-        
-        // Dictionary to map line number to image
-        public Dictionary<int, MyImage> Images { get; set; }
-
-        private IAdornmentLayer _layer;
-        private IWpfTextView _view;
-        private VariableExpander _variableExpander;
-        private string _contentTypeName;
-        private bool _initialised1 = false;
-        private bool _initialised2 = false;
-        private List<ITagSpan<ErrorTag>> _errorTags;
-        
         public ImageAdornmentManager(IWpfTextView view)
         {
             _view = view;
             _layer = view.GetAdornmentLayer("ImageCommentLayer");
-            Images = new Dictionary<int, MyImage>();
-            _view.LayoutChanged += layoutChangedHandler;
-
+            Images = new Dictionary<int, CommentImage>();
+            _view.LayoutChanged += LayoutChangedHandler;
             _contentTypeName = view.TextBuffer.ContentType.TypeName;
             _view.TextBuffer.ContentTypeChanged += contentTypeChangedHandler;
 
@@ -70,24 +69,26 @@ namespace LM.ImageComments.EditorComponent
         /// <summary>
         /// On layout change add the adornment to any reformatted lines
         /// </summary>
-        private void layoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
+        private void LayoutChangedHandler(object sender, TextViewLayoutChangedEventArgs e)
         {
-            if (!ImageAdornmentManager.Enabled)
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (!Enabled)
                 return;
 
             _errorTags.Clear();
-            if (TagsChanged != null)
-            {
-                TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length))));
-            }
+            TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length))));
+            OnTagsChanged(new SnapshotSpan(_view.TextSnapshot, new Span(0, _view.TextSnapshot.Length)));
 
-            foreach (ITextViewLine line in _view.TextViewLines) // TODO [?]: implement more sensible handling of removing error tags, then use e.NewOrReformattedLines
+            foreach (var line in _view.TextViewLines) // TODO [?]: implement more sensible handling of removing error tags, then use e.NewOrReformattedLines
             {
-                int lineNumber = line.Snapshot.GetLineFromPosition(line.Start.Position).LineNumber;
+                var lineNumber = line.Snapshot.GetLineFromPosition(line.Start.Position).LineNumber;
                 //TODO [?]: Limit rate of calls to the below when user is editing a line
                 try
                 {
-                    this.createVisuals(line, lineNumber);
+                    ITextDocument textDoc = null;
+                    var success = TextDocumentFactory?.TryGetTextDocument(_view.TextBuffer, out textDoc);
+                    CreateVisuals(line, lineNumber, success.HasValue && success.Value && textDoc!=null ? textDoc.FilePath : null);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -114,28 +115,24 @@ namespace LM.ImageComments.EditorComponent
         /// <summary>
         /// Scans text line for matching image comment signature, then adds new or updates existing image adornment
         /// </summary>
-        private void createVisuals(ITextViewLine line, int lineNumber)
+        private void CreateVisuals(ITextViewLine line, int lineNumber, string absFilename)
         {
-#pragma warning disable 219
-            bool imageDetected = false; // useful for tracing
-#pragma warning restore 219
+            ThreadHelper.ThrowIfNotOnUIThread();
 
-            string lineText = line.Extent.GetText();
-            string imageUrl;
-            double scale;
-            string matchedText;
-            int matchIndex = ImageCommentParser.Match(_contentTypeName, lineText, out matchedText);
+            var directory = absFilename!=null ? System.IO.Path.GetDirectoryName(absFilename) : null;
+            var lineText = line.Extent.GetText().Split(new[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
+            var matchIndex = ImageCommentParser.Match(_contentTypeName, lineText, out var matchedText);
             if (matchIndex >= 0)
             {
+                //lineText = line.Extent.GetText().Split(new string[] { "\r\n", "\r" }, StringSplitOptions.None)[0];
                 // Get coordinates of text
-                int start = line.Extent.Start.Position + matchIndex;
-                int end = line.Start + (line.Extent.Length - 1);
+                var start = line.Extent.Start.Position + matchIndex;
+                var end = line.Start + (line.Extent.Length - 1);
                 var span = new SnapshotSpan(_view.TextSnapshot, Span.FromBounds(start, end));
 
-                Exception xmlParseException;
-                ImageCommentParser.TryParse(matchedText, out imageUrl, out scale, out xmlParseException);
+                ImageCommentParser.TryParse(matchedText, out var parsedImgData, out var parsingError);
 
-                if (xmlParseException != null)
+                if (parsingError != null)
                 {
                     if (Images.ContainsKey(lineNumber))
                     {
@@ -143,46 +140,41 @@ namespace LM.ImageComments.EditorComponent
                         Images.Remove(lineNumber);
                     }
 
-                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("XML parse error", getErrorMessage(xmlParseException))));
+                    _errorTags.Add(new TagSpan<ErrorTag>(span,
+                        new ErrorTag("XML parse error", $"Problem with comment format: {parsingError}")));
 
                     return;
                 }
 
-                MyImage image = null;
-                Exception imageLoadingException = null;
+                string loadingMessage = null;
                 
                 // Check for and update existing image
-                MyImage existingImage = Images.ContainsKey(lineNumber) ? Images[lineNumber] : null;
-                if (existingImage != null)
+                CommentImage image = Images.ContainsKey(lineNumber) ? Images[lineNumber] : null;
+                if (image != null)
                 {
-                    image = existingImage;
-                    if (existingImage.Url == imageUrl && existingImage.Scale != scale) // URL same but scale changed
+                    if (!image.Attributes.Equals(parsedImgData)) // URL different, so set new source
                     {
-                        existingImage.Scale = scale;
-                    }
-                    else if (existingImage.Url != imageUrl) // URL different, so set new source
-                    {
-                        existingImage.TrySet(imageUrl, scale, out imageLoadingException);
+                        image.TrySet(directory, parsedImgData, out loadingMessage, () => CreateVisuals(line, lineNumber, absFilename));
                     }
                 }
                 else // No existing image, so create new one
                 {
-                    image = new MyImage(_variableExpander);
-                    image.TrySet(imageUrl, scale, out imageLoadingException);
+                    image = new CommentImage(_variableExpander);
+                    image.TrySet(directory, parsedImgData, out loadingMessage, () => CreateVisuals(line, lineNumber, absFilename));
                     Images.Add(lineNumber, image);
                 }
 
                 // Position image and add as adornment
-                if (imageLoadingException == null)
+                if (loadingMessage == null && image.Source!= null)
                 {
                     
-                    Geometry g = _view.TextViewLines.GetMarkerGeometry(span);
-                    if (g == null) // Exceptional case when image dimensions are massive (e.g. specifying very large scale factor)
+                    var geometry = _view.TextViewLines.GetMarkerGeometry(span);
+                    if (geometry == null) // Exceptional case when image dimensions are massive (e.g. specifying very large scale factor)
                     {
                         throw new InvalidOperationException("Couldn't get source code line geometry. Is the loaded image massive?");
                     }
-                    double textLeft = g.Bounds.Left;
-                    double textBottom = line.TextBottom;
+                    var textLeft = geometry.Bounds.Left;
+                    var textBottom = line.TextBottom;
                     Canvas.SetLeft(image, textLeft);
                     Canvas.SetTop(image, textBottom);
 
@@ -201,36 +193,27 @@ namespace LM.ImageComments.EditorComponent
                 else
                 {
                     if (Images.ContainsKey(lineNumber))
+                    {
                         Images.Remove(lineNumber);
+                    }
 
-                    _errorTags.Add(new TagSpan<ErrorTag>(span, new ErrorTag("Trouble loading image", getErrorMessage(imageLoadingException))));
+                    _errorTags.Add(new TagSpan<ErrorTag>(span, loadingMessage == null ?
+                        new ErrorTag("No image set", "No image set") :
+                        new ErrorTag("Trouble loading image", loadingMessage)));
                 }
-                imageDetected = true;
             }
             else
             {
                 if (Images.ContainsKey(lineNumber))
+                {
                     Images.Remove(lineNumber);
+                }
             }
         }
 
-        private string getErrorMessage(Exception exception)
+        private void UnsubscribeFromViewerEvents()
         {
-            Trace.WriteLine("Problem parsing comment text or loading image...\n" + exception);
-
-            string message;
-            if (exception is XmlException)
-                message = "Problem with comment format: " + exception.Message;
-            else if (exception is NotSupportedException)
-                message = exception.Message + "\nThis problem could be caused by a corrupt, invalid or unsupported image file.";
-            else
-                message = exception.Message;
-            return message;
-        }
-
-        private void unsubscribeFromViewerEvents()
-        {
-            _view.LayoutChanged -= layoutChangedHandler;
+            _view.LayoutChanged -= LayoutChangedHandler;
             _view.TextBuffer.ContentTypeChanged -= contentTypeChangedHandler;
         }
 
@@ -242,6 +225,10 @@ namespace LM.ImageComments.EditorComponent
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+        protected void OnTagsChanged(SnapshotSpan span)
+        {
+            TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(span));
+        }
 
         #endregion
 
@@ -255,7 +242,7 @@ namespace LM.ImageComments.EditorComponent
         /// </remarks>
         public void Dispose()
         {
-            unsubscribeFromViewerEvents();
+            UnsubscribeFromViewerEvents();
         }
 
         #endregion
