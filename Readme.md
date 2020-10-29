@@ -3,7 +3,7 @@
 ## Overview
 This is an extension for the Visual Studio code editor that allows images to be displayed amongst code, allowing for visually rich comments. For example...
 
-![](http://lukesdm.github.com/image-comments/media/example-1.png)
+![](readme-files/example-1.png)
 
 ## Usage Info
 
@@ -47,7 +47,7 @@ Images are displayed using the [WPF Image control](http://msdn.microsoft.com/en-
 If there's a problem trying to load the image or parse the tag, the tag will be squiggly-underlined and hovering over this will show the error, e.g
 
 
-![](http://lukesdm.github.com/image-comments/media/error-example-1.png)
+![](readme-files/error-example-1.png)
 
 
 The languages currently supported are Python, C#, F# (fixme), C, C++ and VB.
